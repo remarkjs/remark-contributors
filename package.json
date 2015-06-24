@@ -1,0 +1,42 @@
+{
+  "name": "mdast-contributors",
+  "version": "1.0.0",
+  "description": "mdast plugin to inject a given list of contributors into a table in a markdown file",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "node test | tap-spec",
+    "prepublish": "node inject"
+  },
+  "author": {
+    "name": "Hugh Kennedy",
+    "email": "hughskennedy@gmail.com",
+    "url": "http://hughsk.io/"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "diff": "^1.4.0",
+    "mdast": "^0.22.0",
+    "tap-spec": "^4.0.0",
+    "tape": "^4.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hughsk/mdast-contributors.git"
+  },
+  "keywords": [
+    "mdast",
+    "generation",
+    "inject",
+    "automatic",
+    "contributors",
+    "list",
+    "table",
+    "text",
+    "markdown"
+  ],
+  "homepage": "https://github.com/hughsk/mdast-contributors",
+  "bugs": {
+    "url": "https://github.com/hughsk/mdast-contributors/issues"
+  }
+}
