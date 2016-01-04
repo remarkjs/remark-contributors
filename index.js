@@ -1,6 +1,8 @@
+var toString = require('mdast-util-to-string')
+
 module.exports = contributorTableAttacher
 
-function contributorTableAttacher (mdast, opts) {
+function contributorTableAttacher (remark, opts) {
   return function contributorTableTransformer (root, file) {
     var heading  = getHeadingIndex(root.children)
     var children = root.children
@@ -104,10 +106,8 @@ function contributorTableAttacher (mdast, opts) {
     for (var i = 0; i < children.length; i++) {
       if (children[i].type !== 'heading') continue
 
-      var text = mdast.stringify({
-        children: children[i].children,
-        type: 'root'
-      }).toLowerCase()
+      var text = toString(children[i])
+        .toLowerCase()
         .replace(/[^a-z ]/g, ' ')
         .replace(/\s+/g, ' ')
         .trim()

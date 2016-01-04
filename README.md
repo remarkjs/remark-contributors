@@ -1,11 +1,11 @@
-# mdast-contributors
+# remark-contributors
 
 ![](http://img.shields.io/badge/stability-stable-orange.svg?style=flat)
-![](http://img.shields.io/npm/v/mdast-contributors.svg?style=flat)
-![](http://img.shields.io/npm/dm/mdast-contributors.svg?style=flat)
-![](http://img.shields.io/npm/l/mdast-contributors.svg?style=flat)
+![](http://img.shields.io/npm/v/remark-contributors.svg?style=flat)
+![](http://img.shields.io/npm/dm/remark-contributors.svg?style=flat)
+![](http://img.shields.io/npm/l/remark-contributors.svg?style=flat)
 
-[mdast](https://github.com/wooorm/mdast) plugin to inject a given list of contributors
+[remark](https://github.com/wooorm/remark) plugin to inject a given list of contributors
 into a table in a markdown file.
 
 Safe to be run on your `README.md` file before each commit
@@ -13,15 +13,15 @@ without creating unnecessary noise!
 
 ## Usage
 
-[![NPM](https://nodei.co/npm/mdast-contributors.png)](https://nodei.co/npm/mdast-contributors/)
+[![NPM](https://nodei.co/npm/remark-contributors.png)](https://nodei.co/npm/remark-contributors/)
 
-Used as a plugin for mdast like so:
+Used as a plugin for remark like so:
 
 ```javascript
-const plugin = require('mdast-contributors')
-const mdast  = require('mdast')
+const plugin = require('remark-contributors')
+const remark  = require('remark')
 
-readme = mdast.use(plugin, {
+readme = remark.use(plugin, {
   contributors: [
     {
       name: 'Hugh Kennedy',
@@ -73,10 +73,11 @@ properties:
 
 ## License
 
-MIT. See [LICENSE.md](http://github.com/hughsk/mdast-contributors/blob/master/LICENSE.md) for details.
+MIT. See [LICENSE.md](http://github.com/hughsk/remark-contributors/blob/master/LICENSE.md) for details.
 
 ## Contributors
 
 | Name             | GitHub                              | Twitter                                           |
 | ---------------- | ----------------------------------- | ------------------------------------------------- |
 | **Hugh Kennedy** | [hughsk](https://github.com/hughsk) | [@hughskennedy](https://twitter.com/hughskennedy) |
+| **Titus Wormer** | [wooorm](https://github.com/wooorm) | [@wooorm](https://twitter.com/wooorm)             |
