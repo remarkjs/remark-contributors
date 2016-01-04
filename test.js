@@ -1,4 +1,4 @@
-const mdast  = require('mdast')
+const remark  = require('remark')
 const test   = require('tape')
 const diff   = require('diff')
 const plugin = require('./')
@@ -16,8 +16,8 @@ const expected = {
   'Adds table if not present in section': fs.readFileSync('fixtures/add-table-expected.md', 'utf8')
 }
 
-test('mdast-contributors', function(t) {
-  const processor = mdast.use(plugin, {
+test('remark-contributors', function(t) {
+  const processor = remark.use(plugin, {
     contributors: [
       { name: 'Hugh Kennedy', github: 'hughsk', twitter: 'hughskennedy' },
       { name: 'Tim Oxley', github: 'timoxley', twitter: 'secoif' },
