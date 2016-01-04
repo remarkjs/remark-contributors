@@ -5,6 +5,9 @@
 ![](http://img.shields.io/npm/dm/mdast-contributors.svg?style=flat)
 ![](http://img.shields.io/npm/l/mdast-contributors.svg?style=flat)
 
+**mdast-contributors has been renamed to
+[remark-contributors](https://github.com/hughsk/remark-contributors/) in light of [mdast's rename to remark](https://github.com/wooorm/remark/releases/tag/3.0.0).**
+
 [mdast](https://github.com/wooorm/mdast) plugin to inject a given list of contributors
 into a table in a markdown file.
 
