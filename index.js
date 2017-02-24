@@ -2,7 +2,7 @@ var toString = require('mdast-util-to-string')
 
 module.exports = contributorTableAttacher
 
-function contributorTableAttacher (remark, opts) {
+function contributorTableAttacher (opts) {
   return function contributorTableTransformer (root, file) {
     var heading  = getHeadingIndex(root.children)
     var children = root.children
@@ -43,17 +43,17 @@ function contributorTableAttacher (remark, opts) {
         },
         {
           type: 'link',
-          href: 'https://github.com/' + contrib.github,
+          url: 'https://github.com/' + contrib.github,
           value: contrib.github
         },
         {
           type: 'link',
-          href: 'https://twitter.com/' + contrib.twitter.replace(/^\@/g, ''),
+          url: 'https://twitter.com/' + contrib.twitter.replace(/^\@/g, ''),
           value: contrib.twitter
         }
       ].map(function(child) {
         child.children = [
-          { type: 'text', value: child.value }
+          { type: 'text', value: child.value || '' }
         ]
 
         delete child.value

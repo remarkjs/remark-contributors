@@ -17,7 +17,7 @@ const expected = {
 }
 
 test('remark-contributors', function(t) {
-  const processor = remark.use(plugin, {
+  const processor = remark().use(plugin, {
     contributors: [
       { name: 'Hugh Kennedy', github: 'hughsk', twitter: 'hughskennedy' },
       { name: 'Tim Oxley', github: 'timoxley', twitter: 'secoif' },
@@ -26,7 +26,7 @@ test('remark-contributors', function(t) {
   })
 
   Object.keys(fixtures).forEach(function(name) {
-    const actual = processor.process(fixtures[name]).trim()
+    const actual = processor.processSync(fixtures[name]).toString().trim()
     const expect = expected[name].trim()
 
     t.equal(actual, expect, name)

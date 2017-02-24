@@ -21,7 +21,7 @@ Used as a plugin for remark like so:
 const plugin = require('remark-contributors')
 const remark  = require('remark')
 
-readme = remark.use(plugin, {
+readme = remark().use(plugin, {
   contributors: [
     {
       name: 'Hugh Kennedy',
@@ -29,7 +29,7 @@ readme = remark.use(plugin, {
       github: 'hughsk'
     }
   ]
-}).process(readme)
+}).processSync(readme)
 ```
 
 This will add a "Contributors" section to your document if
