@@ -37,6 +37,10 @@ function contributorTableAttacher(opts) {
       });
     }
 
+    if (opts.contributors.length === 0) {
+      return;
+    }
+
     let tableHeaders = [];
 
     // Traverse through all contributors to get all the unique table headers
@@ -135,10 +139,9 @@ function contributorTableAttacher(opts) {
 
         let value = contrib[key] || '';
 
-        const child = { type: key === 'name' ? 'strong' : 'text' };
+        const child = {type: key === 'name' ? 'strong' : 'text'};
 
         if (key === 'github' || key === 'twitter') {
-
           // Automatically strip URL's in values from GitHub and Twitter
           // So we can display just the username alone
           const com = '.com/';
