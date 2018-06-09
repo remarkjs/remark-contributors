@@ -2,12 +2,16 @@ const isURL = require('is-url');
 const parse = require('parse-author');
 const toString = require('mdast-util-to-string');
 const path = require('path');
+const defaultHeaders = require('./headers');
 
 module.exports = contributorTableAttacher;
 
 function contributorTableAttacher(opts) {
   opts = opts || {};
   opts.contributors = opts.contributors || [];
+
+  const headers = Object.assign({}, opts.headers || defaultHeaders);
+
   return function contributorTableTransformer(root, file) {
     const heading = getHeadingIndex(root.children);
     const children = root.children;
@@ -53,24 +57,8 @@ function contributorTableAttacher(opts) {
           return;
         }
 
-        // Name => Name
-        if (key === 'name') {
-          original = 'Name';
-        }
-
-        // Url => Website
-        if (key === 'url') {
-          original = 'Website';
-        }
-
-        // Github => GitHub
-        if (key === 'github') {
-          original = 'GitHub';
-        }
-
-        // Twitter => Twitter
-        if (key === 'twitter') {
-          original = 'Twitter';
+        if (headers[key] && headers[key].label) {
+          original = headers[key].label;
         }
 
         if (tableHeaders.indexOf(original) === -1) {
@@ -138,61 +126,14 @@ function contributorTableAttacher(opts) {
         key = header.toLowerCase();
 
         let value = contrib[key] || '';
+        let child;
 
-        const child = {type: key === 'name' ? 'strong' : 'text'};
-
-        if (key === 'github' || key === 'twitter') {
-          // Automatically strip URL's in values from GitHub and Twitter
-          // So we can display just the username alone
-          const com = '.com/';
-          if (value.toLowerCase().indexOf(com) !== -1) {
-            value = value.substring(value.indexOf(com) + com.length);
-          }
-
-          // Strip out the string without trailing slash if it has one
-          // so we just get the username back from the value entered
-          if (value.indexOf('/') !== -1) {
-            value = value.substring(0, value.indexOf('/'));
-          }
-
-          // Remove "@" from the URL's if there are any
-          if (value.indexOf('@') === 0) {
-            value = value.substring(1);
-          }
-
-          // Prevent empty links
-          if (value === '') {
-            child.value = '';
-          } else {
-            // Ensure https link is used and properly formatted username
-            child.type = 'link';
-            child.url = 'https://' + key + '.com/' + value;
-
-            // Add the "@" prefix to username
-            value = '@' + value;
-
-            // TODO: Should we add title here?
-            // Add title
-            // child.title = 'View ' + value + ' on ' + header;
-
-            child.children = [
-              {
-                // Set the @mention to bold just like GitHub/Twitter do
-                // Note that this package also puts in bold the @mentions
-                // <https://github.com/wooorm/remark-github>
-                type: 'strong',
-                children: [{type: 'text', value}]
-              }
-            ];
-          }
+        if (headers[key] && headers[key].format) {
+          child = headers[key].format(value, contrib, key);
         } else if (isURL(value)) {
-          child.type = 'link';
-          child.url = value;
-          child.children = [{type: 'text', value}];
-        } else if (child.type === 'strong') {
-          child.children = [{type: 'text', value}];
+          child = {type: 'link', url: value, children: [{type: 'text', value}]};
         } else {
-          child.value = value;
+          child = {type: 'text', value: value};
         }
 
         // Return a table cell
