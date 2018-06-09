@@ -129,6 +129,10 @@ function contributorTableAttacher(opts) {
 
         if (headers[key] && headers[key].format) {
           child = headers[key].format(value, contrib, key);
+
+          if (!child) {
+            child = {type: 'text', value: ''};
+          }
         } else if (isURL(value)) {
           child = {type: 'link', url: value, children: [{type: 'text', value}]};
         } else {
