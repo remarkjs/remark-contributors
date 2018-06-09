@@ -7,10 +7,29 @@ const defaultHeaders = require('./headers');
 module.exports = contributorTableAttacher;
 
 function contributorTableAttacher(opts) {
-  opts = opts || {};
+  opts = Object.assign({}, opts);
   opts.contributors = opts.contributors || [];
 
-  const headers = Object.assign({}, opts.headers || defaultHeaders);
+  let headers;
+  let labels;
+
+  if (opts.headers) {
+    headers = Object.assign({}, opts.headers);
+    labels = [];
+
+    Object.keys(headers).forEach(key => {
+      if (headers[key] === true) {
+        headers[key] = defaultHeaders[key];
+      }
+
+      if (!headers[key].exclude) {
+        labels.push(headers[key].label || key);
+      };
+    })
+  } else {
+    headers = defaultHeaders;
+    labels = null;
+  }
 
   return function contributorTableTransformer(root, file) {
     const heading = getHeadingIndex(root.children);
@@ -45,10 +64,8 @@ function contributorTableAttacher(opts) {
       return;
     }
 
-    let tableHeaders = [];
-
     // Traverse through all contributors to get all the unique table headers
-    opts.contributors.forEach(contrib => {
+    let tableHeaders = labels || opts.contributors.reduce((acc, contrib) => {
       Object.keys(contrib).forEach(original => {
         const key = original.toLowerCase();
 
@@ -60,11 +77,13 @@ function contributorTableAttacher(opts) {
           original = headers[key].label;
         }
 
-        if (tableHeaders.indexOf(original) === -1) {
-          tableHeaders.push(original);
+        if (acc.indexOf(original) === -1) {
+          acc.push(original);
         }
       });
-    });
+
+      return acc;
+    }, []);
 
     // Format contributor field names properly and lowercased
     opts.contributors = opts.contributors.map(contrib => {
