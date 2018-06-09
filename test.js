@@ -25,6 +25,9 @@ const customExpected = fs.readFileSync('fixtures/custom-expected.md', 'utf8');
 const partialFixture = fs.readFileSync('fixtures/partial.md', 'utf8');
 const partialExpected = fs.readFileSync('fixtures/partial-expected.md', 'utf8');
 
+const formatFixture = fs.readFileSync('fixtures/format.md', 'utf8');
+const formatExpected = fs.readFileSync('fixtures/format-expected.md', 'utf8');
+
 test('remark-contributors with package.json contributors field', t => {
   const processor = remark().use(plugin);
   const actual = processor.processSync(packageFixture).toString().trim();
@@ -86,6 +89,38 @@ test('remark-contributors with partial github/twitter contributors options', t =
   const actual = processor.processSync(partialFixture).toString().trim();
   const expect = partialExpected.trim();
   t.equal(actual, expect, 'Skips missing properties');
+  if (actual !== expect) {
+    console.error(diff.diffChars(expect, actual));
+  }
+  t.end();
+});
+
+test('remark-contributors with custom formatter options', t => {
+  const processor = remark().use(plugin, {
+    headers: {
+      name: true,
+      github: true,
+      social: {
+        label: 'Social',
+        format: function(value, contrib) {
+          // To simplify this test, don't wrap in links etc.
+          if (contrib.twitter) {
+            return {type: 'text', value: '@' + contrib.twitter + '@twitter'};
+          } else if (contrib.mastodon) {
+            return {type: 'text', value: contrib.mastodon};
+          }
+        }
+      }
+    },
+    contributors: [
+      { name: 'Sara', github: 'sara', mastodon: '@sara@domain' },
+      { name: 'Jason' },
+      { name: 'Alice', twitter: 'alice' }
+    ]
+  });
+  const actual = processor.processSync(formatFixture).toString().trim();
+  const expect = formatExpected.trim();
+  t.equal(actual, expect, 'Supports custom formatters');
   if (actual !== expect) {
     console.error(diff.diffChars(expect, actual));
   }
