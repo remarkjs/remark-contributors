@@ -160,26 +160,31 @@ function contributorTableAttacher(opts) {
             value = value.substring(1);
           }
 
-          // Ensure https link is used and properly formatted username
-          child.type = 'link';
-          child.url = 'https://' + key + '.com/' + value;
+          // Prevent empty links
+          if (value === '') {
+            child.value = '';
+          } else {
+            // Ensure https link is used and properly formatted username
+            child.type = 'link';
+            child.url = 'https://' + key + '.com/' + value;
 
-          // Add the "@" prefix to username
-          value = '@' + value;
+            // Add the "@" prefix to username
+            value = '@' + value;
 
-          // TODO: Should we add title here?
-          // Add title
-          // child.title = 'View ' + value + ' on ' + header;
+            // TODO: Should we add title here?
+            // Add title
+            // child.title = 'View ' + value + ' on ' + header;
 
-          child.children = [
-            {
-              // Set the @mention to bold just like GitHub/Twitter do
-              // Note that this package also puts in bold the @mentions
-              // <https://github.com/wooorm/remark-github>
-              type: 'strong',
-              children: [{type: 'text', value}]
-            }
-          ];
+            child.children = [
+              {
+                // Set the @mention to bold just like GitHub/Twitter do
+                // Note that this package also puts in bold the @mentions
+                // <https://github.com/wooorm/remark-github>
+                type: 'strong',
+                children: [{type: 'text', value}]
+              }
+            ];
+          }
         } else if (isURL(value)) {
           child.type = 'link';
           child.url = value;
