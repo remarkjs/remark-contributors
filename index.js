@@ -52,8 +52,7 @@ function contributorTableAttacher(opts) {
       Object.keys(contrib).forEach(original => {
         const key = original.toLowerCase();
 
-        // Exclude email
-        if (key === 'email') {
+        if (headers[key] && headers[key].exclude) {
           return;
         }
 
@@ -80,9 +79,9 @@ function contributorTableAttacher(opts) {
           contrib[key] = value;
         }
 
-        // Never include an email in the table
-        if (key === 'email') {
+        if (headers[key] && headers[key].exclude) {
           delete contrib[key];
+          return;
         }
 
         // Ensure that url => website

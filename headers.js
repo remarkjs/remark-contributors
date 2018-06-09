@@ -1,5 +1,9 @@
 'use strict'
 
+exports.email = {
+  exclude: true
+};
+
 exports.name = {
   label: 'Name',
   format: function(value) {
