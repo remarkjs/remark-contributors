@@ -147,7 +147,7 @@ function contributorTableAttacher(opts) {
         let child;
 
         if (headers[key] && headers[key].format) {
-          child = headers[key].format(value, contrib, key);
+          child = headers[key].format(value, contrib, key, file);
 
           if (!child) {
             child = {type: 'text', value: ''};
