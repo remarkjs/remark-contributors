@@ -22,6 +22,9 @@ const packageExpected = fs.readFileSync('fixtures/package-expected.md', 'utf8');
 const customFixture = fs.readFileSync('fixtures/custom.md', 'utf8');
 const customExpected = fs.readFileSync('fixtures/custom-expected.md', 'utf8');
 
+const partialFixture = fs.readFileSync('fixtures/partial.md', 'utf8');
+const partialExpected = fs.readFileSync('fixtures/partial-expected.md', 'utf8');
+
 test('remark-contributors with package.json contributors field', t => {
   const processor = remark().use(plugin);
   const actual = processor.processSync(packageFixture).toString().trim();
@@ -69,5 +72,22 @@ test('remark-contributors with github/twitter contributors options (with typos)'
     }
   });
 
+  t.end();
+});
+
+test('remark-contributors with partial github/twitter contributors options', t => {
+  const processor = remark().use(plugin, {
+    contributors: [
+      { name: 'Sara', github: 'sara' },
+      { name: 'Jason' },
+      { name: 'Alice', twitter: 'alice' }
+    ]
+  });
+  const actual = processor.processSync(partialFixture).toString().trim();
+  const expect = partialExpected.trim();
+  t.equal(actual, expect, 'Skips missing properties');
+  if (actual !== expect) {
+    console.error(diff.diffChars(expect, actual));
+  }
   t.end();
 });
