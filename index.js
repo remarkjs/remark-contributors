@@ -8,8 +8,15 @@ module.exports = contributorTableAttacher;
 function contributorTableAttacher(opts) {
   opts = opts || {};
   opts.contributors = opts.contributors || [];
+  if (typeof opts.appendIfMissing === "undefined") {
+    opts.appendIfMissing = false
+  };
+
   return function contributorTableTransformer(root, file) {
     const heading = getHeadingIndex(root.children);
+    if (!heading && !opts.appendIfMissing) {
+      return;
+    }
     const children = root.children;
     let pack = {};
 

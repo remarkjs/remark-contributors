@@ -71,7 +71,10 @@ readme = remark().use(plugin, {
 
 ### Output
 
-This will add a "Contributors" section to your document if one is not already present. If one is present, a list of contributors will be added to that section.
+This will add a `Contributors` section to your document if one is not already
+present and you set [`appendIfMissing`](#options.appendIfMissing) to `true` in
+the options. If such section already is present, a list of contributors will be
+added to that section.
 
 For example, the following input markdown:
 
@@ -118,6 +121,10 @@ An array of contributors, with properties such as:
 -   `name`: the preferred name of the contributor.
 -   `github`: the GitHub account of the contributor, with or without an `@`.
 -   `twitter`: the Twitter account of the contributor, with or without an `@`.
+
+### `options.appendIfMissing`
+
+Optional. Defaults to **false**. If set to `true` it will append a section (that is, a heading and a table) if no `Contributors` heading is found.
 
 ## Contributors
 
