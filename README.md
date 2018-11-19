@@ -121,11 +121,12 @@ An array of contributors, with properties such as:
 
 ## Contributors
 
-| Name             | GitHub                                              | Twitter                                               |
-| ---------------- | --------------------------------------------------- | ----------------------------------------------------- |
-| **Hugh Kennedy** | [**@hughsk**](https://github.com/hughsk)             | [**@hughskennedy**](https://twitter.com/hughskennedy) |
-| **Titus Wormer** | [**@wooorm**](https://github.com/wooorm)             | [**@wooorm**](https://twitter.com/wooorm)             |
-| **Nick Baugh**   | [**@niftylettuce**](https://github.com/niftylettuce) | [**@niftylettuce**](https://twitter.com/niftylettuce) |
+| Name                | GitHub                                               | Twitter                                               |
+| ------------------- | ---------------------------------------------------- | ----------------------------------------------------- |
+| **Hugh Kennedy**    | [**@hughsk**](https://github.com/hughsk)             | [**@hughskennedy**](https://twitter.com/hughskennedy) |
+| **Titus Wormer**    | [**@wooorm**](https://github.com/wooorm)             | [**@wooorm**](https://twitter.com/wooorm)             |
+| **Nick Baugh**      | [**@niftylettuce**](https://github.com/niftylettuce) | [**@niftylettuce**](https://twitter.com/niftylettuce) |
+| **Vincent Weevers** | [**@vweevers**](https://github.com/vweevers)         | [**@vweevers**](https://twitter.com/vweevers)         |
 
 ## License
 
