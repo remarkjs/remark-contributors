@@ -119,6 +119,10 @@ An array of contributors, with properties such as:
 -   `github`: the GitHub account of the contributor, with or without an `@`.
 -   `twitter`: the Twitter account of the contributor, with or without an `@`.
 
+### `options.align`
+
+Optional alignment of table cells. One of [`'left'`, `'right'`, `'center'` or `null` (default)](https://github.com/syntax-tree/mdast#aligntype).
+
 ## Contributors
 
 | Name                | GitHub                                               | Twitter                                               |
