@@ -71,7 +71,10 @@ readme = remark().use(plugin, {
 
 ### Output
 
-This will add a "Contributors" section to your document if one is not already present. If one is present, a list of contributors will be added to that section.
+This plugin will add or update a list of contributors in a `Contributors` section.
+If such a section is not present, nothing happens by default.
+To have the plugin add a new section to the end of the document, set
+[`appendIfMissing: true`](#options.appendIfMissing).
 
 For example, the following input markdown:
 
@@ -81,7 +84,7 @@ For example, the following input markdown:
 Hello World!
 ```
 
-Would yield:
+…would not be changed, unless `appendIfMissing: true`, in which case it would yield:
 
 ```markdown
 # My Readme
@@ -96,7 +99,7 @@ Hello World!
 | **Nick Baugh**   | [**@niftylettuce**](https://github.com/niftylettuce) | [**@niftylettuce**](https://twitter.com/niftylettuce) |
 ```
 
-Any other text in the contributors section will still be preserved, so you can still include appreciative personal gratitude of your choosing.
+If there is other text in the contributors section it will be preserved: only the table will be changed.
 
 ### Notes
 
@@ -122,6 +125,10 @@ An array of contributors, with properties such as:
 ### `options.align`
 
 Optional alignment of table cells. One of [`'left'`, `'right'`, `'center'` or `null` (default)](https://github.com/syntax-tree/mdast#aligntype).
+
+### `options.appendIfMissing`
+
+Optional. Defaults to **false**. If set to `true` it will append a section (that is, a heading and a table) if no `Contributors` heading is found.
 
 ## Contributors
 

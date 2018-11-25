@@ -32,10 +32,23 @@ const alignFixture = fs.readFileSync('fixtures/align.md', 'utf8');
 const alignExpected = fs.readFileSync('fixtures/align-expected.md', 'utf8');
 
 test('remark-contributors with package.json contributors field', t => {
-  const processor = remark().use(plugin);
+  const processor = remark().use(plugin, {
+    appendIfMissing: true
+  });
   const actual = processor.processSync(packageFixture).toString().trim();
   const expect = packageExpected.trim();
   t.equal(actual, expect, 'Adds section if none exists');
+  if (actual !== expect) {
+    console.error(diff.diffChars(expect, actual));
+  }
+  t.end();
+});
+
+test('do not add remark-contributors when header is missing', t => {
+  const processor = remark().use(plugin);
+  const actual = processor.processSync(packageFixture).toString().trim();
+  const expect = packageFixture.trim();
+  t.equal(actual, expect, 'Do not add section if none exists and options prevent adding');
   if (actual !== expect) {
     console.error(diff.diffChars(expect, actual));
   }
@@ -48,7 +61,8 @@ test('remark-contributors with custom contributors option headers', t => {
       { name: 'Jason', Age: 20, Commits: 99, YouTube: 'https://youtube.com/some-channel', Term: 1 },
       { Commits: 20, name: 'Alex', Term: 2 },
       { name: 'Theo', Commits: 19, Age: 17 }
-    ]
+    ],
+    appendIfMissing: true
   });
   const actual = processor.processSync(customFixture).toString().trim();
   const expect = customExpected.trim();
@@ -66,7 +80,8 @@ test('remark-contributors with github/twitter contributors options (with typos)'
         {name: 'Hugh Kennedy', GITHUB: 'hughsk', twitter: '@hughskennedy'},
         {GithuB: 'https://github.com/timoxley', name: 'Tim Oxley', TWITTER: 'secoif'},
         {Twitter: 'http://twitter.com/@rvagg/', github: 'rvagg', name: 'Rod Vagg' }
-      ]
+      ],
+      appendIfMissing: true
     });
     const actual = processor.processSync(fixtures[name]).toString().trim();
     const expect = expected[name].trim();
