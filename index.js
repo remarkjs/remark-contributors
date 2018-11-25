@@ -32,7 +32,7 @@ function contributorTableAttacher(opts) {
 
   return function contributorTableTransformer(root, file) {
     const heading = getHeadingIndex(root.children);
-    if (!heading && !opts.appendIfMissing) {
+    if (heading === null && !opts.appendIfMissing) {
       return;
     }
     const children = root.children;
