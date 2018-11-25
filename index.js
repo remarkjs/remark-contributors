@@ -1,229 +1,233 @@
-const path = require('path')
-const isURL = require('is-url')
-const parse = require('parse-author')
-const toString = require('mdast-util-to-string')
-const defaultHeaders = require('./headers')
+'use strict'
 
-module.exports = contributorTableAttacher
+var fs = require('fs')
+var path = require('path')
+var isURL = require('is-url')
+var parse = require('parse-author')
+var heading = require('mdast-util-heading-range')
+var u = require('unist-builder')
+var defaultFormatters = require('./formatters')
 
-function contributorTableAttacher(opts) {
-  opts = Object.assign({}, opts)
-  opts.contributors = opts.contributors || []
-  let headers
-  let labels
+module.exports = contributors
 
-  if (opts.headers) {
-    headers = Object.assign({}, opts.headers)
-    labels = []
+function contributors(opts) {
+  var settings = opts || {}
+  var align = settings.align || null
+  var defaultContributors = settings.contributors
+  var formatters = createFormatters(settings.formatters)
 
-    Object.keys(headers).forEach(key => {
-      if (headers[key] === true) {
-        headers[key] = defaultHeaders[key]
+  return transform
+
+  function transform(tree, file, next) {
+    if (defaultContributors) {
+      done(defaultContributors)
+    } else {
+      fs.readFile(path.resolve(file.cwd, 'package.json'), onpackage)
+    }
+
+    function onpackage(err, buf) {
+      var pack = {}
+
+      if (buf) {
+        try {
+          pack = JSON.parse(buf)
+        } catch (error) {
+          return next(error)
+        }
       }
 
-      if (!headers[key].exclude) {
-        labels.push(headers[key].label || key)
+      /* istanbul ignore if - hard to test. */
+      if (err && err.code !== 'ENOENT') {
+        next(err)
+      } else {
+        done(pack.contributors)
       }
-    })
-  } else {
-    headers = defaultHeaders
-    labels = null
+    }
+
+    function done(values) {
+      var contributors = []
+      var length = values && values.length
+      var index = -1
+      var value
+
+      while (++index < length) {
+        value = values[index]
+        contributors.push(typeof value === 'string' ? parse(value) : value)
+      }
+
+      if (contributors.length === 0) {
+        next(
+          new Error(
+            'Missing required `contributors` in settings.\nEither add `contributors` to `package.json` or pass them into `remark-contributors`'
+          )
+        )
+      } else {
+        oncontributors(contributors)
+      }
+    }
+
+    function oncontributors(contributors) {
+      var table = createTable(contributors, formatters, align)
+      var headingFound = false
+
+      heading(tree, 'contributors', onheading)
+
+      // Add the section if not found but with `appendIfMissing`.
+      if (!headingFound && settings.appendIfMissing) {
+        tree.children.push(
+          u('heading', {depth: 2}, [u('text', 'Contributors')]),
+          table
+        )
+      }
+
+      next()
+
+      function onheading(start, nodes, end) {
+        var length = nodes.length
+        var index = -1
+        var node
+        var tableFound
+
+        headingFound = true
+
+        while (++index < length) {
+          node = nodes[index]
+
+          if (node.type === 'table') {
+            tableFound = true
+            nodes = nodes.slice(0, index).concat(table, nodes.slice(index + 1))
+            break
+          }
+        }
+
+        if (!tableFound) {
+          nodes = [table].concat(nodes)
+        }
+
+        return [start].concat(nodes, end)
+      }
+    }
+  }
+}
+
+function createTable(contributors, formatters, align) {
+  var keys = createKeys(contributors, formatters)
+  var length = contributors.length
+  var count = keys.length
+  var index = -1
+  var rows = []
+  var offset = -1
+  var contributor
+  var key
+  var cells = []
+  var aligns = []
+  var value
+  var format
+
+  while (++offset < count) {
+    key = keys[offset]
+    value = (formatters[key] && formatters[key].label) || key
+
+    aligns[offset] = align
+    cells[offset] = u('tableCell', [u('text', value)])
   }
 
-  return contributorTableTransformer
+  rows.push(u('tableRow', cells))
 
-  function contributorTableTransformer(root, file) {
-    const heading = getHeadingIndex(root.children)
-    if (!heading && !opts.appendIfMissing) {
-      return
-    }
-    const children = root.children
-    let pack = {}
+  while (++index < length) {
+    contributor = contributors[index]
+    offset = -1
+    cells = []
 
-    try {
-      pack = require(path.resolve(file.cwd, 'package.json'))
-    } catch (error) {}
+    while (++offset < count) {
+      key = keys[offset]
+      format = (formatters[key] && formatters[key].format) || identity
+      value = contributor[key]
 
-    const title = {
-      type: 'heading',
-      depth: 2,
-      children: [{type: 'text', value: 'Contributors'}]
-    }
+      if (value === null || value === undefined) {
+        value = ''
+      } else if (typeof value === 'number') {
+        value = String(value)
+      }
 
-    // Fallback to "contributors" defined in package.json if it exists
-    if (opts.contributors.length === 0 && pack.contributors) {
-      // Convert "contributors" in package.json to an array of objects
-      // each with `name`, `email`, and `url` if available
-      opts.contributors = pack.contributors.map(contrib => {
-        if (typeof contrib === 'string') {
-          contrib = parse(contrib)
-        }
-        return contrib
-      })
-    }
+      value = format(value, key, contributor)
 
-    if (opts.contributors.length === 0) {
-      return
-    }
-
-    // Traverse through all contributors to get all the unique table headers
-    let tableHeaders =
-      labels ||
-      opts.contributors.reduce((acc, contrib) => {
-        Object.keys(contrib).forEach(original => {
-          const key = original.toLowerCase()
-
-          if (headers[key] && headers[key].exclude) {
-            return
-          }
-
-          if (headers[key] && headers[key].label) {
-            original = headers[key].label
-          }
-
-          if (acc.indexOf(original) === -1) {
-            acc.push(original)
-          }
-        })
-
-        return acc
-      }, [])
-
-    // Format contributor field names properly and lowercased
-    opts.contributors = opts.contributors.map(contrib => {
-      Object.keys(contrib).forEach(key => {
-        // Store the value of the key
-        const value = contrib[key]
-
-        // Convert all keys to lowercase
-        if (key !== key.toLowerCase()) {
-          delete contrib[key]
-          key = key.toLowerCase()
-          contrib[key] = value
-        }
-
-        if (headers[key] && headers[key].exclude) {
-          delete contrib[key]
-          return
-        }
-
-        // Ensure that url => website
-        if (key === 'url') {
-          delete contrib[key]
-          contrib.website = value
-        }
-
-        // Convert numbers to strings
-        if (typeof value === 'number') {
-          contrib[key] = value.toString()
-        }
-      })
-      return contrib
-    })
-
-    // Ensure that Name is always the first table header
-    const nameIndex = tableHeaders.indexOf('Name')
-    if (nameIndex !== -1 && nameIndex !== 0) {
-      delete tableHeaders[nameIndex]
-      tableHeaders = ['Name'].concat(tableHeaders)
-    }
-
-    const tableHead = {
-      type: 'tableHeader',
-      children: tableHeaders.map(label => {
-        return {
-          type: 'tableCell',
-          children: [{type: 'text', value: label}]
-        }
-      })
-    }
-
-    const tableRows = opts.contributors.map(contrib => {
-      // Go through each header in the tableHeaders
-      // and then add them, in order, respective to contributor
-      const children = tableHeaders.map(header => {
-        // Convert to lowercase for contributor fields
-        const key = header.toLowerCase()
-
-        let value = contrib[key] || ''
-        let child
-
-        if (headers[key] && headers[key].format) {
-          child = headers[key].format(value, key, contrib)
-
-          if (!child) {
-            child = {type: 'text', value: ''}
-          }
-        } else if (isURL(value)) {
-          child = {type: 'link', url: value, children: [{type: 'text', value}]}
+      if (typeof value === 'string') {
+        if (isURL(value)) {
+          value = u('link', {url: value}, [u('text', value)])
         } else {
-          child = {type: 'text', value: value}
+          value = u('text', value)
         }
-
-        // Return a table cell
-        return {type: 'tableCell', children: [child]}
-      })
-
-      return {
-        type: 'tableRow',
-        children
       }
-    })
 
-    const table = {
-      type: 'table',
-      align: new Array(tableHeaders.length).fill(opts.align || null),
-      children: [tableHead].concat(tableRows)
+      if (value === null || value === undefined) {
+        value = []
+      } else if (typeof value.length !== 'number') {
+        value = [value]
+      }
+
+      cells[offset] = u('tableCell', value)
     }
 
-    // If no heading was found, add the contributors
-    // section to the end of the README file.
-    if (heading === null) {
-      root.children = root.children.concat([title, table])
-      return
-    }
-
-    // Otherwise, try and replace the first table in the
-    // contributors section with the newly generated one.
-    for (let j = heading + 1; j < children.length; j++) {
-      const child = children[j]
-      if (child.type === 'heading') {
-        break
-      }
-      if (child.type !== 'table') {
-        continue
-      }
-      children[j] = table
-      return
-    }
-
-    // If a table wasn't found, insert it at the
-    // beginning of the contributors section.
-    children.splice(heading + 1, 0, table)
+    rows.push(u('tableRow', cells))
   }
 
-  //
-  // Tries to find the first "contributors" heading
-  // in the README. If one isn't found, will simply
-  // return `null`.
-  //
-  function getHeadingIndex(children) {
-    for (let i = 0; i < children.length; i++) {
-      if (children[i].type !== 'heading') {
+  return u('table', {align: aligns}, rows)
+}
+
+function createKeys(contributors, formatters) {
+  var length = contributors.length
+  var index = -1
+  var labels = []
+  var contributor
+  var field
+  var formatter
+
+  while (++index < length) {
+    contributor = contributors[index]
+
+    for (field in contributor) {
+      formatter = formatters[field.toLowerCase()]
+
+      if (formatter && formatter.exclude) {
         continue
       }
 
-      const text = toString(children[i])
-        .toLowerCase()
-        .replace(/[^a-z ]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim()
-
-      if (text === 'contributors') {
-        return i
+      if (labels.indexOf(field) === -1) {
+        labels.push(field)
       }
     }
-
-    return null
   }
+
+  return labels
+}
+
+function createFormatters(headers) {
+  var formatters = Object.assign({}, defaultFormatters)
+  var key
+  var formatter
+
+  if (!headers) {
+    return formatters
+  }
+
+  for (key in headers) {
+    formatter = headers[key]
+
+    if (typeof formatter === 'string') {
+      formatter = {label: formatter}
+    } else if (typeof formatter === 'boolean') {
+      formatter = {label: key, exclude: !formatter}
+    } else if (formatter === null || typeof formatter !== 'object') {
+      continue
+    }
+
+    formatters[key] = formatter
+  }
+
+  return formatters
+}
+
+function identity(value) {
+  return value
 }

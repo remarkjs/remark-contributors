@@ -55,9 +55,12 @@ Some text.
 
 ## Contributors
 
-| Name           | Website                   |
-| -------------- | ------------------------- |
-| **Nick Baugh** | <http://niftylettuce.com> |
+| Name                | Website                     |
+| ------------------- | --------------------------- |
+| **Hugh Kennedy**    | <https://hughsk.io>         |
+| **Titus Wormer**    | <https://wooorm.com>        |
+| **Vincent Weevers** | <https://vincentweevers.nl> |
+| **Nick Baugh**      | <https://niftylettuce.com>  |
 
 ## License
 
@@ -80,6 +83,8 @@ Add a Contributors section.
 
 List of contributors to inject (`Array.<Object>`).
 Defaults to the `contributors` field in the `package.json`, if there is one.
+Supports the string form (`name <email> (url)`) as well.
+Fails if no contributors are found or given.
 
 ###### `options.align`
 
@@ -90,21 +95,47 @@ default: `null`).
 
 Inject the section if there is none (`boolean`, default: `false`).
 
+###### `options.formatters`
+
+Map of fields found in `contributors` to formatters (`Object.<Formatter>`).
+These given formatters extend the [default formatters][formatters].
+
+The keys in `formatters` should correspond directly (case-sensitive) to keys in
+`contributors`.
+
+The values can be:
+
+*   `null` or `undefined` — does nothing
+*   `false` — shortcut for `{label: key, exclude: true}`, can be used to exclude
+    default formatters
+*   `true` — shortcut for `{label: key}`, can be used to include default
+    formatters (like `email`)
+*   `string` — shortcut for `{label: value}`
+*   `Formatter` — …or a proper formatter object
+
+Formatters have the following properties:
+
+*   `label` — text in the header row that labels the column for this field
+*   `exclude` — whether to ignore these fields (default: `false`)
+*   `format` — function called with `value, key, contributor` to format
+    the value.  Expected to return [PhrasingContent][].  Can return null or
+    undefined (ignored), a string (wrapped in a [text][] node), a string that
+    looks like a URL (wrapped in a [link][]), one node, or multiple nodes
+
 ##### Notes
 
-### Notes
-
-*   If there are custom fields other than `name`, `url`, `github`, or `twitter`,
-    you should use proper casing (such as Dribbble) when defining contributors
-*   Fields named `url` will be automatically renamed to `Website` for display
-    purposes (e.g. in `package.json` contributors field)
-*   Emails are automatically removed from being displayed
-*   If a field is undefined for a given contributor, then the value will be set
-    to an empty string automatically
-*   Header names are displayed in the order they are defined (first defined =>
-    first displayed)
-*   GitHub and Twitter URL’s are automatically stripped and displayed with
+*   Define fields other than `name`, `url`, `github`, or `twitter` in
+    `formatters` to label them properly
+*   By default, fields named `url` will be labelled `Website` (so that
+    `package.json` contributors field is displayed nicely)
+*   By default, fields named `email` are ignored
+*   Name fields are displayed as strong
+*   GitHub and Twitter URLs are automatically stripped and displayed with
     `@mention`s wrapped in an `https://` link
+*   If a field is undefined for a given contributor, then the value will be an
+    empty table cell
+*   Columns are sorted in the order they are defined (first defined => first
+    displayed)
 
 ## Related
 
@@ -158,3 +189,11 @@ Inject the section if there is none (`boolean`, default: `false`).
 [npm]: https://docs.npmjs.com/cli/install
 
 [remark]: https://github.com/remarkjs/remark
+
+[formatters]: formatters.js
+
+[phrasingcontent]: https://github.com/syntax-tree/mdast/blob/master/readme.md#phrasingcontent
+
+[text]: https://github.com/syntax-tree/mdast#text
+
+[link]: https://github.com/syntax-tree/mdast#link

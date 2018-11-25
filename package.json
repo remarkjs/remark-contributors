@@ -23,22 +23,23 @@
     "Nick Baugh <niftylettuce@gmail.com> (https://niftylettuce.com)"
   ],
   "files": [
-    "headers.js",
+    "formatters.js",
     "index.js"
   ],
   "dependencies": {
     "is-url": "^1.2.2",
-    "mdast-util-to-string": "^1.0.0",
-    "parse-author": "^2.0.0"
+    "mdast-util-heading-range": "^2.1.2",
+    "parse-author": "^2.0.0",
+    "unist-builder": "^1.0.3"
   },
   "devDependencies": {
-    "diff": "^3.5.0",
     "nyc": "^13.1.0",
     "prettier": "^1.15.2",
     "remark": "^10.0.1",
     "remark-cli": "^6.0.1",
     "remark-preset-wooorm": "^4.0.0",
     "tape": "^4.9.1",
+    "to-vfile": "^5.0.2",
     "xo": "^0.23.0"
   },
   "scripts": {
@@ -63,7 +64,10 @@
   },
   "xo": {
     "prettier": true,
-    "esnext": false
+    "esnext": false,
+    "rules": {
+      "guard-for-in": "off"
+    }
   },
   "remarkConfig": {
     "plugins": [

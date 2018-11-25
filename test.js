@@ -1,214 +1,255 @@
-const fs = require('fs')
-const remark = require('remark')
-const test = require('tape')
-const diff = require('diff')
-const plugin = require('.')
+'use strict'
 
-const fixtures = {
-  'Adds section if none exists': fs.readFileSync('fixtures/basic.md', 'utf8'),
-  'Replaces table if present in section': fs.readFileSync(
-    'fixtures/replace-table.md',
-    'utf8'
-  ),
-  'Adds table if not present in section': fs.readFileSync(
-    'fixtures/add-table.md',
-    'utf8'
-  )
-}
+var test = require('tape')
+var remark = require('remark')
+var vfile = require('to-vfile')
+var contributors = require('.')
 
-const expected = {
-  'Adds section if none exists': fs.readFileSync(
-    'fixtures/basic-expected.md',
-    'utf8'
-  ),
-  'Replaces table if present in section': fs.readFileSync(
-    'fixtures/replace-table-expected.md',
-    'utf8'
-  ),
-  'Adds table if not present in section': fs.readFileSync(
-    'fixtures/add-table-expected.md',
-    'utf8'
-  )
-}
+test('remark-contributors', function(t) {
+  t.plan(11)
 
-const packageFixture = fs.readFileSync('fixtures/package.md', 'utf8')
-const packageExpected = fs.readFileSync('fixtures/package-expected.md', 'utf8')
+  remark()
+    .use(contributors)
+    .process(vfile.readSync('fixtures/package.md'), function(err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/package.md'))],
+        'should not add a section by default'
+      )
+    })
 
-const customFixture = fs.readFileSync('fixtures/custom.md', 'utf8')
-const customExpected = fs.readFileSync('fixtures/custom-expected.md', 'utf8')
+  remark()
+    .use(contributors, {appendIfMissing: true})
+    .process(vfile.readSync('fixtures/package.md'), function(err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/package-expected.md'))],
+        'should add a section by default if none exists and `appendIfMissing: true`'
+      )
+    })
 
-const partialFixture = fs.readFileSync('fixtures/partial.md', 'utf8')
-const partialExpected = fs.readFileSync('fixtures/partial-expected.md', 'utf8')
-
-const formatFixture = fs.readFileSync('fixtures/format.md', 'utf8')
-const formatExpected = fs.readFileSync('fixtures/format-expected.md', 'utf8')
-
-const alignFixture = fs.readFileSync('fixtures/align.md', 'utf8')
-const alignExpected = fs.readFileSync('fixtures/align-expected.md', 'utf8')
-
-test('remark-contributors with package.json contributors field', t => {
-  const processor = remark().use(plugin, {
-    appendIfMissing: true
-  })
-  const actual = processor
-    .processSync(packageFixture)
-    .toString()
-    .trim()
-  const expect = packageExpected.trim()
-  t.equal(actual, expect, 'Adds section if none exists')
-  if (actual !== expect) {
-    console.error(diff.diffChars(expect, actual))
-  }
-  t.end()
-})
-
-test('do not add remark-contributors when header is missing', t => {
-  const processor = remark().use(plugin)
-  const actual = processor
-    .processSync(packageFixture)
-    .toString()
-    .trim()
-  const expect = packageFixture.trim()
-  t.equal(
-    actual,
-    expect,
-    'Do not add section if none exists and options prevent adding'
-  )
-  if (actual !== expect) {
-    console.error(diff.diffChars(expect, actual))
-  }
-  t.end()
-})
-
-test('remark-contributors with custom contributors option headers', t => {
-  const processor = remark().use(plugin, {
-    contributors: [
-      {
-        name: 'Jason',
-        Age: 20,
-        Commits: 99,
-        YouTube: 'https://youtube.com/some-channel',
-        Term: 1
+  remark()
+    .use(contributors, {
+      formatters: {
+        name: null,
+        age: 'Age',
+        commits: 'Commits',
+        youtube: 'YouTube',
+        term: 'Term'
       },
-      {Commits: 20, name: 'Alex', Term: 2},
-      {name: 'Theo', Commits: 19, Age: 17}
-    ],
-    appendIfMissing: true
-  })
-  const actual = processor
-    .processSync(customFixture)
-    .toString()
-    .trim()
-  const expect = customExpected.trim()
-  t.equal(actual, expect, 'Adds section if none exists')
-  if (actual !== expect) {
-    console.error(diff.diffChars(expect, actual))
-  }
-  t.end()
-})
-
-test('remark-contributors with github/twitter contributors options (with typos)', t => {
-  Object.keys(fixtures).forEach(name => {
-    const processor = remark().use(plugin, {
       contributors: [
-        {name: 'Hugh Kennedy', GITHUB: 'hughsk', twitter: '@hughskennedy'},
         {
-          GithuB: 'https://github.com/timoxley',
-          name: 'Tim Oxley',
-          TWITTER: 'secoif'
+          name: 'Jason',
+          age: 20,
+          commits: 99,
+          youtube: 'https://youtube.com/some-channel',
+          term: 1
         },
-        {
-          Twitter: 'http://twitter.com/@rvagg/',
-          github: 'rvagg',
-          name: 'Rod Vagg'
-        }
+        {commits: 20, name: 'Alex', term: 2},
+        {name: 'Theo', commits: 19, age: 17}
       ],
       appendIfMissing: true
     })
-    const actual = processor
-      .processSync(fixtures[name])
-      .toString()
-      .trim()
-    const expect = expected[name].trim()
+    .process(vfile.readSync('fixtures/custom.md'), function(err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/custom-expected.md'))],
+        'should support custom fields'
+      )
+    })
 
-    t.equal(actual, expect, name)
+  remark()
+    .use(contributors, {
+      contributors: [
+        {name: 'Sara', github: 'sara'},
+        {name: 'Jason'},
+        {name: 'Alice', twitter: 'alice'}
+      ],
+      appendIfMissing: true
+    })
+    .process(vfile.readSync('fixtures/partial.md'), function(err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/partial-expected.md'))],
+        'should support partial github/twitter fields'
+      )
+    })
 
-    if (actual !== expect) {
-      console.error(diff.diffChars(expect, actual))
-    }
-  })
+  remark()
+    .use(contributors, {
+      formatters: {
+        // Defaults:
+        name: false,
+        email: true,
+        // Others:
+        alpha: false,
+        bravo: true,
+        charlie: null,
+        delta: 'Delta',
+        echo: {exclude: true},
+        Foxtrot: {label: 'Foxtrot'}
+      },
+      contributors: [
+        {
+          name: 'Name',
+          email: 'Email',
+          alpha: 'Alpha',
+          bravo: 'Bravo',
+          charlie: 'Charlie',
+          delta: 'Delta',
+          echo: 'Echo',
+          foxtrot: 'Foxtrot'
+        }
+      ]
+    })
+    .process(vfile.readSync('fixtures/formatters.md'), function(err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/formatters-expected.md'))],
+        'should support formatters'
+      )
+    })
 
-  t.end()
-})
-
-test('remark-contributors with partial github/twitter contributors options', t => {
-  const processor = remark().use(plugin, {
-    contributors: [
-      {name: 'Sara', github: 'sara'},
-      {name: 'Jason'},
-      {name: 'Alice', twitter: 'alice'}
-    ],
-    appendIfMissing: true
-  })
-  const actual = processor
-    .processSync(partialFixture)
-    .toString()
-    .trim()
-  const expect = partialExpected.trim()
-  t.equal(actual, expect, 'Skips missing properties')
-  if (actual !== expect) {
-    console.error(diff.diffChars(expect, actual))
-  }
-  t.end()
-})
-
-test('remark-contributors with custom formatter options', t => {
-  const processor = remark().use(plugin, {
-    headers: {
-      name: true,
-      github: true,
-      social: {
-        label: 'Social',
-        format: function(value, key, contrib) {
+  remark()
+    .use(contributors, {
+      formatters: {
+        social: {
+          label: 'Social',
           // To simplify this test, don't wrap in links etc.
-          if (contrib.twitter) {
-            return {type: 'text', value: '@' + contrib.twitter + '@twitter'}
-          }
-          if (contrib.mastodon) {
-            return {type: 'text', value: contrib.mastodon}
+          format: function(value) {
+            var parts = value.split('@').length
+
+            if (!value) {
+              return null
+            }
+
+            // Check that returning multiple nodes works:
+            if (parts > 2) {
+              return [{type: 'text', value: value}]
+            }
+
+            return value ? '@' + value + '@twitter' : null
           }
         }
-      }
-    },
-    contributors: [
-      {name: 'Sara', github: 'sara', mastodon: '@sara@domain'},
-      {name: 'Jason'},
-      {name: 'Alice', twitter: 'alice'}
-    ],
-    appendIfMissing: true
-  })
-  const actual = processor
-    .processSync(formatFixture)
-    .toString()
-    .trim()
-  const expect = formatExpected.trim()
-  t.equal(actual, expect, 'Supports custom formatters')
-  if (actual !== expect) {
-    console.error(diff.diffChars(expect, actual))
-  }
-  t.end()
-})
+      },
+      contributors: [
+        {name: 'Sara', github: 'sara', social: '@sara@domain'},
+        {name: 'Jason'},
+        {name: 'Alice', social: 'alice'}
+      ],
+      appendIfMissing: true
+    })
+    .process(vfile.readSync('fixtures/format.md'), function(err, file) {
+      console.log('err: ', err)
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/format-expected.md'))],
+        'should support custom field formatters'
+      )
+    })
 
-test('remark-contributors with align option', t => {
-  const processor = remark().use(plugin, {align: 'left'})
-  const actual = processor
-    .processSync(alignFixture)
-    .toString()
-    .trim()
-  const expect = alignExpected.trim()
-  t.equal(actual, expect, 'Sets table alignment')
-  if (actual !== expect) {
-    console.error(diff.diffChars(expect, actual))
-  }
-  t.end()
+  remark()
+    .use(contributors)
+    .process(
+      vfile.readSync({
+        path: 'index.md',
+        cwd: 'fixtures/valid-package'
+      }),
+      function(err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [null, String(vfile.readSync('fixtures/valid-package/expected.md'))],
+          'should read from `package.json` if no contributors are given'
+        )
+      }
+    )
+
+  remark()
+    .use(contributors)
+    .process(
+      vfile.readSync({
+        path: 'index.md',
+        cwd: 'fixtures/invalid-package'
+      }),
+      function(err) {
+        t.ok(
+          /Unexpected end of JSON input/.test(err),
+          'should not swallow invalid `package.json` errors'
+        )
+      }
+    )
+
+  remark()
+    .use(contributors)
+    .process(
+      vfile.readSync({
+        path: 'index.md',
+        cwd: 'fixtures/missing-package'
+      }),
+      function(err) {
+        t.ok(
+          /Missing required `contributors` in settings/.test(err),
+          'should throw if no contributors are given or found'
+        )
+      }
+    )
+
+  remark()
+    .use(contributors, {align: 'left'})
+    .process(vfile.readSync('fixtures/align.md'), function(err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/align-expected.md'))],
+        'should support the align option'
+      )
+    })
+
+  t.test('Fixtures', function(st) {
+    var fixtures = [
+      {
+        label: 'Adds section if none exists',
+        input: vfile.readSync('fixtures/basic.md'),
+        expected: vfile.readSync('fixtures/basic-expected.md')
+      },
+      {
+        label: 'Replaces table if present in section',
+        input: vfile.readSync('fixtures/replace-table.md'),
+        expected: vfile.readSync('fixtures/replace-table-expected.md')
+      },
+      {
+        label: 'Adds table if not present in section',
+        input: vfile.readSync('fixtures/add-table.md'),
+        expected: vfile.readSync('fixtures/add-table-expected.md')
+      }
+    ]
+
+    st.plan(fixtures.length)
+
+    fixtures.forEach(function(fixture) {
+      remark()
+        .use(contributors, {
+          contributors: [
+            {name: 'Hugh Kennedy', github: 'hughsk', twitter: '@hughskennedy'},
+            {
+              github: 'https://github.com/timoxley',
+              name: 'Tim Oxley',
+              twitter: 'secoif'
+            },
+            {
+              twitter: 'http://twitter.com/@rvagg/',
+              github: 'rvagg',
+              name: 'Rod Vagg'
+            }
+          ],
+          appendIfMissing: true
+        })
+        .process(fixture.input, function(err, file) {
+          st.deepEqual(
+            [err, String(file)],
+            [null, String(fixture.expected)],
+            fixture.label
+          )
+        })
+    })
+  })
 })
