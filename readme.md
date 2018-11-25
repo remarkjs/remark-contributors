@@ -76,17 +76,17 @@ Add a Contributors section.
 
 ##### Options
 
-###### `contributors`
+###### `options.contributors`
 
 List of contributors to inject (`Array.<Object>`).
 Defaults to the `contributors` field in the `package.json`, if there is one.
 
-###### `align`
+###### `options.align`
 
 Alignment to use for all cells in the table (`left`, `right`, `center`,
 default: `null`).
 
-###### `appendIfMissing`
+###### `options.appendIfMissing`
 
 Inject the section if there is none (`boolean`, default: `false`).
 
@@ -104,7 +104,7 @@ Inject the section if there is none (`boolean`, default: `false`).
 *   Header names are displayed in the order they are defined (first defined =>
     first displayed)
 *   GitHub and Twitter URL’s are automatically stripped and displayed with
-    **@mention** wrapped in an `https://` link
+    `@mention`s wrapped in an `https://` link
 
 ## Related
 
@@ -122,12 +122,12 @@ Inject the section if there is none (`boolean`, default: `false`).
 
 ## Contributors
 
-| Name                | GitHub                                               | Twitter                                               |
-| ------------------- | ---------------------------------------------------- | ----------------------------------------------------- |
-| **Hugh Kennedy**    | [**@hughsk**](https://github.com/hughsk)             | [**@hughskennedy**](https://twitter.com/hughskennedy) |
-| **Titus Wormer**    | [**@wooorm**](https://github.com/wooorm)             | [**@wooorm**](https://twitter.com/wooorm)             |
-| **Nick Baugh**      | [**@niftylettuce**](https://github.com/niftylettuce) | [**@niftylettuce**](https://twitter.com/niftylettuce) |
-| **Vincent Weevers** | [**@vweevers**](https://github.com/vweevers)         | [**@vweevers**](https://twitter.com/vweevers)         |
+| Name                | Website                     |
+| ------------------- | --------------------------- |
+| **Hugh Kennedy**    | <https://hughsk.io>         |
+| **Titus Wormer**    | <https://wooorm.com>        |
+| **Vincent Weevers** | <https://vincentweevers.nl> |
+| **Nick Baugh**      | <https://niftylettuce.com>  |
 
 ## License
 

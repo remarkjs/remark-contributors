@@ -2,21 +2,30 @@
   "name": "remark-contributors",
   "version": "3.1.0",
   "description": "remark plugin to inject a given list of contributors into a table in a markdown file",
-  "main": "index.js",
   "license": "MIT",
-  "contributors": [
-    "Nick Baugh <niftylettuce@gmail.com> (http://niftylettuce.com)"
+  "keywords": [
+    "text",
+    "markdown",
+    "contributors",
+    "contributor",
+    "remark",
+    "generation",
+    "inject",
+    "automatic"
   ],
-  "scripts": {
-    "format": "remark . -qfo",
-    "test": "node test | tap-spec",
-    "prepublish": "node inject"
-  },
-  "author": {
-    "name": "Hugh Kennedy",
-    "email": "hughskennedy@gmail.com",
-    "url": "http://hughsk.io/"
-  },
+  "repository": "hughsk/remark-contributors",
+  "bugs": "https://github.com/hughsk/remark-contributors/issues",
+  "author": "Hugh Kennedy <hughskennedy@gmail.com> (https://hughsk.io)",
+  "contributors": [
+    "Hugh Kennedy <hughskennedy@gmail.com> (https://hughsk.io)",
+    "Titus Wormer <tituswormer@gmail.com> (https://wooorm.com)",
+    "Vincent Weevers <mail@vincentweevers.nl> (https://vincentweevers.nl)",
+    "Nick Baugh <niftylettuce@gmail.com> (https://niftylettuce.com)"
+  ],
+  "files": [
+    "headers.js",
+    "index.js"
+  ],
   "dependencies": {
     "is-url": "^1.2.2",
     "mdast-util-to-string": "^1.0.0",
@@ -30,28 +39,14 @@
     "tap-spec": "^4.0.0",
     "tape": "^4.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/hughsk/remark-contributors.git"
-  },
-  "keywords": [
-    "remark",
-    "generation",
-    "inject",
-    "automatic",
-    "contributors",
-    "list",
-    "table",
-    "text",
-    "markdown"
-  ],
-  "homepage": "https://github.com/hughsk/remark-contributors",
-  "bugs": {
-    "url": "https://github.com/hughsk/remark-contributors/issues"
+  "scripts": {
+    "format": "remark . -qfo",
+    "test": "node test | tap-spec"
   },
   "remarkConfig": {
     "plugins": [
-      "preset-wooorm"
+      "preset-wooorm",
+      "."
     ]
   }
 }
