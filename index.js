@@ -9,7 +9,6 @@ module.exports = contributorTableAttacher;
 function contributorTableAttacher(opts) {
   opts = Object.assign({}, opts);
   opts.contributors = opts.contributors || [];
-
   let headers;
   let labels;
 
@@ -33,6 +32,9 @@ function contributorTableAttacher(opts) {
 
   return function contributorTableTransformer(root, file) {
     const heading = getHeadingIndex(root.children);
+    if (!heading && !opts.appendIfMissing) {
+      return;
+    }
     const children = root.children;
     let pack = {};
 
