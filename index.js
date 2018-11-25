@@ -9,10 +9,6 @@ module.exports = contributorTableAttacher;
 function contributorTableAttacher(opts) {
   opts = Object.assign({}, opts);
   opts.contributors = opts.contributors || [];
-  if (typeof opts.appendIfMissing === "undefined") {
-    opts.appendIfMissing = false
-  };
-
   let headers;
   let labels;
 
