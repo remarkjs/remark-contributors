@@ -28,6 +28,9 @@ const partialExpected = fs.readFileSync('fixtures/partial-expected.md', 'utf8');
 const formatFixture = fs.readFileSync('fixtures/format.md', 'utf8');
 const formatExpected = fs.readFileSync('fixtures/format-expected.md', 'utf8');
 
+const alignFixture = fs.readFileSync('fixtures/align.md', 'utf8');
+const alignExpected = fs.readFileSync('fixtures/align-expected.md', 'utf8');
+
 test('remark-contributors with package.json contributors field', t => {
   const processor = remark().use(plugin, {
     appendIfMissing: true
@@ -136,6 +139,17 @@ test('remark-contributors with custom formatter options', t => {
   const actual = processor.processSync(formatFixture).toString().trim();
   const expect = formatExpected.trim();
   t.equal(actual, expect, 'Supports custom formatters');
+  if (actual !== expect) {
+    console.error(diff.diffChars(expect, actual));
+  }
+  t.end();
+});
+
+test('remark-contributors with align option', t => {
+  const processor = remark().use(plugin, { align: 'left' });
+  const actual = processor.processSync(alignFixture).toString().trim();
+  const expect = alignExpected.trim();
+  t.equal(actual, expect, 'Sets table alignment');
   if (actual !== expect) {
     console.error(diff.diffChars(expect, actual));
   }

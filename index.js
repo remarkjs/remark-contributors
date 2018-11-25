@@ -172,7 +172,7 @@ function contributorTableAttacher(opts) {
 
     const table = {
       type: 'table',
-      align: new Array(tableHeaders.length).fill(null),
+      align: new Array(tableHeaders.length).fill(opts.align || null),
       children: [tableHead].concat(tableRows)
     };
 
