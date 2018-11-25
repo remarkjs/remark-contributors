@@ -8,6 +8,7 @@
     "Nick Baugh <niftylettuce@gmail.com> (http://niftylettuce.com)"
   ],
   "scripts": {
+    "format": "remark . -qfo",
     "test": "node test | tap-spec",
     "prepublish": "node inject"
   },
@@ -24,6 +25,8 @@
   "devDependencies": {
     "diff": "^3.2.0",
     "remark": "^8.0.0",
+    "remark-cli": "^6.0.1",
+    "remark-preset-wooorm": "^4.0.0",
     "tap-spec": "^4.0.0",
     "tape": "^4.0.0"
   },
@@ -45,5 +48,10 @@
   "homepage": "https://github.com/hughsk/remark-contributors",
   "bugs": {
     "url": "https://github.com/hughsk/remark-contributors/issues"
+  },
+  "remarkConfig": {
+    "plugins": [
+      "preset-wooorm"
+    ]
   }
 }

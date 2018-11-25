@@ -102,7 +102,8 @@ test('remark-contributors with partial github/twitter contributors options', t =
       { name: 'Sara', github: 'sara' },
       { name: 'Jason' },
       { name: 'Alice', twitter: 'alice' }
-    ]
+    ],
+    appendIfMissing: true
   });
   const actual = processor.processSync(partialFixture).toString().trim();
   const expect = partialExpected.trim();
@@ -134,7 +135,8 @@ test('remark-contributors with custom formatter options', t => {
       { name: 'Sara', github: 'sara', mastodon: '@sara@domain' },
       { name: 'Jason' },
       { name: 'Alice', twitter: 'alice' }
-    ]
+    ],
+    appendIfMissing: true
   });
   const actual = processor.processSync(formatFixture).toString().trim();
   const expect = formatExpected.trim();
