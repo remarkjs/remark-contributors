@@ -13,8 +13,8 @@
     "inject",
     "automatic"
   ],
-  "repository": "hughsk/remark-contributors",
-  "bugs": "https://github.com/hughsk/remark-contributors/issues",
+  "repository": "remarkjs/remark-contributors",
+  "bugs": "https://github.com/remarkjs/remark-contributors/issues",
   "author": "Hugh Kennedy <hughskennedy@gmail.com> (https://hughsk.io)",
   "contributors": [
     "Hugh Kennedy <hughskennedy@gmail.com> (https://hughsk.io)",

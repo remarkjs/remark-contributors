@@ -166,13 +166,13 @@ Formatters have the following properties:
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/hughsk/remark-contributors.svg
+[build-badge]: https://img.shields.io/travis/remarkjs/remark-contributors.svg
 
-[build]: https://travis-ci.org/hughsk/remark-contributors
+[build]: https://travis-ci.org/remarkjs/remark-contributors
 
-[coverage-badge]: https://img.shields.io/codecov/c/github/hughsk/remark-contributors.svg
+[coverage-badge]: https://img.shields.io/codecov/c/github/remarkjs/remark-contributors.svg
 
-[coverage]: https://codecov.io/github/hughsk/remark-contributors
+[coverage]: https://codecov.io/github/remarkjs/remark-contributors
 
 [downloads-badge]: https://img.shields.io/npm/dm/remark-contributors.svg
 
