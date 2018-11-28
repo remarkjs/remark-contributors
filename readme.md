@@ -164,7 +164,7 @@ Formatters have the following properties:
 
 ## License
 
-[MIT][license] © [Titus Wormer][author]
+[MIT][license] © [Hugh Kennedy][author]
 
 <!-- Definitions -->
 
@@ -192,7 +192,7 @@ Formatters have the following properties:
 
 [license]: license
 
-[author]: https://wooorm.com
+[author]: https://hughsk.io
 
 [npm]: https://docs.npmjs.com/cli/install
 
