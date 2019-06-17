@@ -1,14 +1,16 @@
 {
   "name": "remark-contributors",
   "version": "4.0.0",
-  "description": "remark plugin to inject a given list of contributors into a table in a markdown file",
+  "description": "remark plugin to inject a given list of contributors into a table",
   "license": "MIT",
   "keywords": [
-    "text",
+    "unified",
+    "remark",
+    "plugin",
+    "mdast",
     "markdown",
     "contributors",
     "contributor",
-    "remark",
     "generation",
     "inject",
     "automatic"
