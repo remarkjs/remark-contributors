@@ -3,21 +3,22 @@
 [![Build][build-badge]][build]
 [![Coverage][coverage-badge]][coverage]
 [![Downloads][downloads-badge]][downloads]
-[![Chat][chat-badge]][chat]
+[![Size][size-badge]][size]
 [![Sponsors][sponsors-badge]][collective]
 [![Backers][backers-badge]][collective]
+[![Chat][chat-badge]][chat]
 
-Generate a Contributors section with **[remark][]**.
+[**remark**][remark] plugin to inject a given list of contributors into a table.
 
-## Installation
+## Install
 
 [npm][]:
 
-```bash
+```sh
 npm install remark-contributors
 ```
 
-## Usage
+## Use
 
 Say we have the following file, `example.md`:
 
@@ -35,7 +36,7 @@ MIT
 
 And our script, `example.js`, looks as follows:
 
-```javascript
+```js
 var vfile = require('to-vfile')
 var remark = require('remark')
 var contributors = require('remark-contributors')
@@ -73,7 +74,7 @@ MIT
 
 ### `remark().use(contributors[, options])`
 
-Add a Contributors section.
+Inject a given list of contributors.
 
 *   Looks for the first heading containing `'Contributors'` (case insensitive)
 *   If no heading is found and `appendIfMissing` is set, inject such a heading
@@ -153,6 +154,16 @@ Formatters have the following properties:
 *   [`remark-license`](https://github.com/remarkjs/remark-license)
     — Generate a license section
 
+## Contribute
+
+See [`contributing.md`][contributing] in [`remarkjs/.github`][health] for ways
+to get started.
+See [`support.md`][support] for ways to get help.
+
+This project has a [Code of Conduct][coc].
+By interacting with this repository, organisation, or community you agree to
+abide by its terms.
+
 ## Contributors
 
 | Name                | Website                     |
@@ -168,7 +179,7 @@ Formatters have the following properties:
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/remarkjs/remark-contributors.svg
+[build-badge]: https://img.shields.io/travis/remarkjs/remark-contributors/master.svg
 
 [build]: https://travis-ci.org/remarkjs/remark-contributors
 
@@ -180,9 +191,9 @@ Formatters have the following properties:
 
 [downloads]: https://www.npmjs.com/package/remark-contributors
 
-[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+[size-badge]: https://img.shields.io/bundlephobia/minzip/remark-contributors.svg
 
-[chat]: https://spectrum.chat/unified/remark
+[size]: https://bundlephobia.com/result?p=remark-contributors
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -190,18 +201,30 @@ Formatters have the following properties:
 
 [collective]: https://opencollective.com/unified
 
+[chat-badge]: https://img.shields.io/badge/join%20the%20community-on%20spectrum-7b16ff.svg
+
+[chat]: https://spectrum.chat/unified/remark
+
+[npm]: https://docs.npmjs.com/cli/install
+
+[health]: https://github.com/remarkjs/.github
+
+[contributing]: https://github.com/remarkjs/.github/blob/master/contributing.md
+
+[support]: https://github.com/remarkjs/.github/blob/master/support.md
+
+[coc]: https://github.com/remarkjs/.github/blob/master/code-of-conduct.md
+
 [license]: license
 
 [author]: https://hughsk.io
 
-[npm]: https://docs.npmjs.com/cli/install
-
 [remark]: https://github.com/remarkjs/remark
-
-[formatters]: formatters.js
-
-[phrasingcontent]: https://github.com/syntax-tree/mdast/blob/master/readme.md#phrasingcontent
 
 [text]: https://github.com/syntax-tree/mdast#text
 
 [link]: https://github.com/syntax-tree/mdast#link
+
+[phrasingcontent]: https://github.com/syntax-tree/mdast/blob/master/readme.md#phrasingcontent
+
+[formatters]: formatters.js
