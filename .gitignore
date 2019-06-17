@@ -3,4 +3,6 @@
 .nyc_output/
 coverage/
 node_modules/
+remark-contributors.js
+remark-contributors.min.js
 yarn.lock
