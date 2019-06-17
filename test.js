@@ -140,7 +140,6 @@ test('remark-contributors', function(t) {
       appendIfMissing: true
     })
     .process(vfile.readSync('fixtures/format.md'), function(err, file) {
-      console.log('err: ', err)
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/format-expected.md'))],
