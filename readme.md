@@ -140,6 +140,17 @@ Formatters have the following properties:
 *   Columns are sorted in the order they are defined (first defined => first
     displayed)
 
+## Security
+
+`options.contributors` (or `contributors` in `package.json`) is used and
+injected into the tree when given or found.
+Data in those lists is formatted by `options.formatters`.
+If a user has access to either, this could open you up to a
+[cross-site scripting (XSS)][xss] attack.
+
+This may become a problem if the Markdown later transformed to
+[**rehype**][rehype] ([**hast**][hast]) or opened in an unsafe Markdown viewer.
+
 ## Related
 
 *   [`remark-collapse`](https://github.com/Rokt33r/remark-collapse)
@@ -228,3 +239,9 @@ abide by its terms.
 [phrasingcontent]: https://github.com/syntax-tree/mdast/blob/master/readme.md#phrasingcontent
 
 [formatters]: formatters.js
+
+[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[rehype]: https://github.com/rehypejs/rehype
+
+[hast]: https://github.com/syntax-tree/hast
