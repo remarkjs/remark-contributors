@@ -17,6 +17,10 @@
   ],
   "repository": "remarkjs/remark-contributors",
   "bugs": "https://github.com/remarkjs/remark-contributors/issues",
+  "funding": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/unified"
+  },
   "author": "Hugh Kennedy <hughskennedy@gmail.com> (https://hughsk.io)",
   "contributors": [
     "Hugh Kennedy <hughskennedy@gmail.com> (https://hughsk.io)",
