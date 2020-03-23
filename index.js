@@ -10,8 +10,8 @@ var defaultFormatters = require('./formatters')
 
 module.exports = contributors
 
-function contributors(opts) {
-  var settings = opts || {}
+function contributors(options) {
+  var settings = options || {}
   var align = settings.align || null
   var defaultContributors = settings.contributors
   var formatters = createFormatters(settings.formatters)

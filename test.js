@@ -5,12 +5,12 @@ var remark = require('remark')
 var vfile = require('to-vfile')
 var contributors = require('.')
 
-test('remark-contributors', function(t) {
+test('remark-contributors', function (t) {
   t.plan(11)
 
   remark()
     .use(contributors)
-    .process(vfile.readSync('fixtures/package.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/package.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/package.md'))],
@@ -20,7 +20,7 @@ test('remark-contributors', function(t) {
 
   remark()
     .use(contributors, {appendIfMissing: true})
-    .process(vfile.readSync('fixtures/package.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/package.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/package-expected.md'))],
@@ -50,7 +50,7 @@ test('remark-contributors', function(t) {
       ],
       appendIfMissing: true
     })
-    .process(vfile.readSync('fixtures/custom.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/custom.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/custom-expected.md'))],
@@ -67,7 +67,7 @@ test('remark-contributors', function(t) {
       ],
       appendIfMissing: true
     })
-    .process(vfile.readSync('fixtures/partial.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/partial.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/partial-expected.md'))],
@@ -102,7 +102,7 @@ test('remark-contributors', function(t) {
         }
       ]
     })
-    .process(vfile.readSync('fixtures/formatters.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/formatters.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/formatters-expected.md'))],
@@ -116,7 +116,7 @@ test('remark-contributors', function(t) {
         social: {
           label: 'Social',
           // To simplify this test, don't wrap in links etc.
-          format: function(value) {
+          format: function (value) {
             var parts = value.split('@').length
 
             if (!value) {
@@ -139,7 +139,7 @@ test('remark-contributors', function(t) {
       ],
       appendIfMissing: true
     })
-    .process(vfile.readSync('fixtures/format.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/format.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/format-expected.md'))],
@@ -154,7 +154,7 @@ test('remark-contributors', function(t) {
         path: 'index.md',
         cwd: 'fixtures/valid-package'
       }),
-      function(err, file) {
+      function (err, file) {
         t.deepEqual(
           [err, String(file)],
           [null, String(vfile.readSync('fixtures/valid-package/expected.md'))],
@@ -170,7 +170,7 @@ test('remark-contributors', function(t) {
         path: 'index.md',
         cwd: 'fixtures/invalid-package'
       }),
-      function(err) {
+      function (err) {
         t.ok(
           /Unexpected end of JSON input/.test(err),
           'should not swallow invalid `package.json` errors'
@@ -185,7 +185,7 @@ test('remark-contributors', function(t) {
         path: 'index.md',
         cwd: 'fixtures/missing-package'
       }),
-      function(err) {
+      function (err) {
         t.ok(
           /Missing required `contributors` in settings/.test(err),
           'should throw if no contributors are given or found'
@@ -195,7 +195,7 @@ test('remark-contributors', function(t) {
 
   remark()
     .use(contributors, {align: 'left'})
-    .process(vfile.readSync('fixtures/align.md'), function(err, file) {
+    .process(vfile.readSync('fixtures/align.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
         [null, String(vfile.readSync('fixtures/align-expected.md'))],
@@ -203,7 +203,7 @@ test('remark-contributors', function(t) {
       )
     })
 
-  t.test('Fixtures', function(st) {
+  t.test('Fixtures', function (st) {
     var fixtures = [
       {
         label: 'Adds section if none exists',
@@ -224,7 +224,7 @@ test('remark-contributors', function(t) {
 
     st.plan(fixtures.length)
 
-    fixtures.forEach(function(fixture) {
+    fixtures.forEach(function (fixture) {
       remark()
         .use(contributors, {
           contributors: [
@@ -242,7 +242,7 @@ test('remark-contributors', function(t) {
           ],
           appendIfMissing: true
         })
-        .process(fixture.input, function(err, file) {
+        .process(fixture.input, function (err, file) {
           st.deepEqual(
             [err, String(file)],
             [null, String(fixture.expected)],
