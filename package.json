@@ -37,7 +37,7 @@
     "is-url": "^1.2.2",
     "mdast-util-heading-range": "^2.1.2",
     "parse-author": "^2.0.0",
-    "unist-builder": "^1.0.3"
+    "unist-builder": "^2.0.0"
   },
   "devDependencies": {
     "browserify": "^16.0.0",
