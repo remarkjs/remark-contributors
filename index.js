@@ -2,7 +2,7 @@
 
 var fs = require('fs')
 var path = require('path')
-var isURL = require('is-url')
+var isUrl = require('is-url')
 var parse = require('parse-author')
 var heading = require('mdast-util-heading-range')
 var u = require('unist-builder')
@@ -153,7 +153,7 @@ function createTable(contributors, formatters, align) {
       value = format(value, key, contributor)
 
       if (typeof value === 'string') {
-        if (isURL(value)) {
+        if (isUrl(value)) {
           value = u('link', {url: value}, [u('text', value)])
         } else {
           value = u('text', value)
