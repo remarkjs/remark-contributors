@@ -1,8 +1,9 @@
 'use strict'
 
-var fs = require('fs')
 var path = require('path')
 var isUrl = require('is-url')
+var findUp = require('vfile-find-up')
+var vfile = require('to-vfile')
 var parse = require('parse-author')
 var heading = require('mdast-util-heading-range')
 var u = require('unist-builder')
@@ -22,26 +23,36 @@ function contributors(options) {
     if (defaultContributors) {
       done(defaultContributors)
     } else {
-      fs.readFile(path.resolve(file.cwd, 'package.json'), onpackage)
+      findUp.one('package.json', path.resolve(file.cwd, file.dirname), onfound)
     }
 
-    function onpackage(err, buf) {
-      var pack = {}
-
-      if (buf) {
-        try {
-          pack = JSON.parse(buf)
-        } catch (error) {
-          return next(error)
-        }
-      }
-
-      /* istanbul ignore if - hard to test. */
-      if (err && err.code !== 'ENOENT') {
+    function onfound(err, file) {
+      /* istanbul ignore if - `find-up` currently never passes errors. */
+      if (err) {
         next(err)
+      } else if (file) {
+        vfile.read(file, onread)
       } else {
-        done(pack.contributors)
+        done([])
       }
+    }
+
+    function onread(err, file) {
+      var pack
+
+      /* istanbul ignore if - files that are found but cannot be read are hard
+       * to test. */
+      if (err) {
+        return next(err)
+      }
+
+      try {
+        pack = JSON.parse(file)
+      } catch (error) {
+        return next(error)
+      }
+
+      done(pack.contributors)
     }
 
     function done(values) {

@@ -1,4 +1,4 @@
-# Formatters
+# Heading
 
 ## Contributors
 

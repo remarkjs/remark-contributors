@@ -1,30 +1,79 @@
 'use strict'
 
+var fs = require('fs')
 var test = require('tape')
 var remark = require('remark')
 var vfile = require('to-vfile')
 var contributors = require('.')
 
+// Hide our project’s `package.json`.
+try {
+  fs.renameSync('package.json', 'package.json.bak')
+} catch (_) {}
+
+test.onFinish(ondone)
+
+function ondone() {
+  try {
+    fs.renameSync('package.json.bak', 'package.json')
+  } catch (_) {}
+}
+
 test('remark-contributors', function (t) {
-  t.plan(11)
+  t.plan(14)
 
   remark()
     .use(contributors)
-    .process(vfile.readSync('fixtures/package.md'), function (err, file) {
+    .process(vfile.readSync('fixtures/no-heading/index.md'), function (
+      err,
+      file
+    ) {
       t.deepEqual(
         [err, String(file)],
-        [null, String(vfile.readSync('fixtures/package.md'))],
+        [null, String(vfile.readSync('fixtures/no-heading/expected.md'))],
         'should not add a section by default'
       )
     })
 
   remark()
     .use(contributors, {appendIfMissing: true})
-    .process(vfile.readSync('fixtures/package.md'), function (err, file) {
+    .process(vfile.readSync('fixtures/no-heading/index.md'), function (
+      err,
+      file
+    ) {
       t.deepEqual(
         [err, String(file)],
-        [null, String(vfile.readSync('fixtures/package-expected.md'))],
-        'should add a section by default if none exists and `appendIfMissing: true`'
+        [
+          null,
+          String(vfile.readSync('fixtures/no-heading/expected-if-append.md'))
+        ],
+        'should add a section if none exists and `appendIfMissing: true`'
+      )
+    })
+
+  remark()
+    .use(contributors)
+    .process(vfile.readSync('fixtures/existing/index.md'), function (
+      err,
+      file
+    ) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/existing/expected.md'))],
+        'should replace an existing table'
+      )
+    })
+
+  remark()
+    .use(contributors)
+    .process(vfile.readSync('fixtures/other-table/index.md'), function (
+      err,
+      file
+    ) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/other-table/expected.md'))],
+        'should not replace other tables'
       )
     })
 
@@ -47,13 +96,15 @@ test('remark-contributors', function (t) {
         },
         {commits: 20, name: 'Alex', term: 2},
         {name: 'Theo', commits: 19, age: 17}
-      ],
-      appendIfMissing: true
+      ]
     })
-    .process(vfile.readSync('fixtures/custom.md'), function (err, file) {
+    .process(vfile.readSync('fixtures/heading/index.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
-        [null, String(vfile.readSync('fixtures/custom-expected.md'))],
+        [
+          null,
+          String(vfile.readSync('fixtures/heading/expected-if-custom.md'))
+        ],
         'should support custom fields'
       )
     })
@@ -64,14 +115,42 @@ test('remark-contributors', function (t) {
         {name: 'Sara', github: 'sara'},
         {name: 'Jason'},
         {name: 'Alice', twitter: 'alice'}
-      ],
-      appendIfMissing: true
+      ]
     })
-    .process(vfile.readSync('fixtures/partial.md'), function (err, file) {
+    .process(vfile.readSync('fixtures/heading/index.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
-        [null, String(vfile.readSync('fixtures/partial-expected.md'))],
+        [
+          null,
+          String(
+            vfile.readSync('fixtures/heading/expected-if-partial-custom.md')
+          )
+        ],
         'should support partial github/twitter fields'
+      )
+    })
+
+  remark()
+    .use(contributors, {
+      contributors: [
+        {name: 'Hugh Kennedy', github: 'hughsk', twitter: '@hughskennedy'},
+        {
+          github: 'https://github.com/timoxley',
+          name: 'Tim Oxley',
+          twitter: 'secoif'
+        },
+        {
+          twitter: 'http://twitter.com/@rvagg/',
+          github: 'rvagg',
+          name: 'Rod Vagg'
+        }
+      ]
+    })
+    .process(vfile.readSync('fixtures/heading/index.md'), function (err, file) {
+      t.deepEqual(
+        [err, String(file)],
+        [null, String(vfile.readSync('fixtures/heading/expected-complex.md'))],
+        'should support complex profiles'
       )
     })
 
@@ -102,10 +181,13 @@ test('remark-contributors', function (t) {
         }
       ]
     })
-    .process(vfile.readSync('fixtures/formatters.md'), function (err, file) {
+    .process(vfile.readSync('fixtures/heading/index.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
-        [null, String(vfile.readSync('fixtures/formatters-expected.md'))],
+        [
+          null,
+          String(vfile.readSync('fixtures/heading/expected-formatters.md'))
+        ],
         'should support formatters'
       )
     })
@@ -136,28 +218,45 @@ test('remark-contributors', function (t) {
         {name: 'Sara', github: 'sara', social: '@sara@domain'},
         {name: 'Jason'},
         {name: 'Alice', social: 'alice'}
-      ],
-      appendIfMissing: true
+      ]
     })
-    .process(vfile.readSync('fixtures/format.md'), function (err, file) {
+    .process(vfile.readSync('fixtures/heading/index.md'), function (err, file) {
       t.deepEqual(
         [err, String(file)],
-        [null, String(vfile.readSync('fixtures/format-expected.md'))],
+        [null, String(vfile.readSync('fixtures/heading/expected-format.md'))],
         'should support custom field formatters'
       )
     })
 
   remark()
-    .use(contributors)
+    .use(contributors, {align: 'left'})
     .process(
-      vfile.readSync({
-        path: 'index.md',
-        cwd: 'fixtures/valid-package'
-      }),
+      vfile.readSync('fixtures/heading-contributors/index.md'),
       function (err, file) {
         t.deepEqual(
           [err, String(file)],
-          [null, String(vfile.readSync('fixtures/valid-package/expected.md'))],
+          [
+            null,
+            String(
+              vfile.readSync('fixtures/heading-contributors/expected-align.md')
+            )
+          ],
+          'should support the align option'
+        )
+      }
+    )
+
+  remark()
+    .use(contributors)
+    .process(
+      vfile.readSync('fixtures/heading-contributors/index.md'),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(vfile.readSync('fixtures/heading-contributors/expected.md'))
+          ],
           'should read from `package.json` if no contributors are given'
         )
       }
@@ -166,89 +265,44 @@ test('remark-contributors', function (t) {
   remark()
     .use(contributors)
     .process(
-      vfile.readSync({
-        path: 'index.md',
-        cwd: 'fixtures/invalid-package'
-      }),
-      function (err) {
-        t.ok(
-          /Unexpected end of JSON input/.test(err),
-          'should not swallow invalid `package.json` errors'
+      vfile.readSync(
+        'fixtures/heading-contributors/deep/deeper/deepest/index.md'
+      ),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(
+              vfile.readSync(
+                'fixtures/heading-contributors/deep/deeper/deepest/expected.md'
+              )
+            )
+          ],
+          'should find `package.json`s up from the given file'
         )
       }
     )
 
   remark()
     .use(contributors)
-    .process(
-      vfile.readSync({
-        path: 'index.md',
-        cwd: 'fixtures/missing-package'
-      }),
-      function (err) {
-        t.ok(
-          /Missing required `contributors` in settings/.test(err),
-          'should throw if no contributors are given or found'
-        )
-      }
-    )
-
-  remark()
-    .use(contributors, {align: 'left'})
-    .process(vfile.readSync('fixtures/align.md'), function (err, file) {
-      t.deepEqual(
-        [err, String(file)],
-        [null, String(vfile.readSync('fixtures/align-expected.md'))],
-        'should support the align option'
+    .process(vfile.readSync('fixtures/invalid-package/index.md'), function (
+      err
+    ) {
+      t.ok(
+        /Unexpected end of JSON input/.test(err),
+        'should not swallow invalid `package.json` errors'
       )
     })
 
-  t.test('Fixtures', function (st) {
-    var fixtures = [
-      {
-        label: 'Adds section if none exists',
-        input: vfile.readSync('fixtures/basic.md'),
-        expected: vfile.readSync('fixtures/basic-expected.md')
-      },
-      {
-        label: 'Replaces table if present in section',
-        input: vfile.readSync('fixtures/replace-table.md'),
-        expected: vfile.readSync('fixtures/replace-table-expected.md')
-      },
-      {
-        label: 'Adds table if not present in section',
-        input: vfile.readSync('fixtures/add-table.md'),
-        expected: vfile.readSync('fixtures/add-table-expected.md')
-      }
-    ]
-
-    st.plan(fixtures.length)
-
-    fixtures.forEach(function (fixture) {
-      remark()
-        .use(contributors, {
-          contributors: [
-            {name: 'Hugh Kennedy', github: 'hughsk', twitter: '@hughskennedy'},
-            {
-              github: 'https://github.com/timoxley',
-              name: 'Tim Oxley',
-              twitter: 'secoif'
-            },
-            {
-              twitter: 'http://twitter.com/@rvagg/',
-              github: 'rvagg',
-              name: 'Rod Vagg'
-            }
-          ],
-          appendIfMissing: true
-        })
-        .process(fixture.input, function (err, file) {
-          st.deepEqual(
-            [err, String(file)],
-            [null, String(fixture.expected)],
-            fixture.label
-          )
-        })
+  remark()
+    .use(contributors)
+    .process(vfile.readSync('fixtures/no-contributors/index.md'), function (
+      err
+    ) {
+      t.ok(
+        /Missing required `contributors` in settings/.test(err),
+        'should throw if no contributors are given or found'
+      )
     })
-  })
 })

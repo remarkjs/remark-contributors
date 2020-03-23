@@ -1,3 +1,3 @@
-# Formatters
+# Heading
 
 ## Contributors

@@ -1,6 +1,7 @@
 ## Contributors
 
-Only tables within this section should be replaced. Otherwise they should be added.
+Only tables within this section should be replaced.
+Otherwise they should be added.
 
 ## Gotcha!
 

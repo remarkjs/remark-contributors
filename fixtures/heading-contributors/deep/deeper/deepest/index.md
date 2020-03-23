@@ -1,3 +1,3 @@
-# Align Fixture
+# Example
 
 ## Contributors
