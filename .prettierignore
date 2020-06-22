@@ -1,3 +1,5 @@
 coverage/
 remark-contributors.js
 remark-contributors.min.js
+*.json
+*.md
