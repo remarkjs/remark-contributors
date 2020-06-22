@@ -190,7 +190,7 @@ abide by its terms.
 
 <!-- Definitions -->
 
-[build-badge]: https://img.shields.io/travis/remarkjs/remark-contributors/master.svg
+[build-badge]: https://img.shields.io/travis/remarkjs/remark-contributors/main.svg
 
 [build]: https://travis-ci.org/remarkjs/remark-contributors
 
@@ -220,11 +220,11 @@ abide by its terms.
 
 [health]: https://github.com/remarkjs/.github
 
-[contributing]: https://github.com/remarkjs/.github/blob/master/contributing.md
+[contributing]: https://github.com/remarkjs/.github/blob/HEAD/contributing.md
 
-[support]: https://github.com/remarkjs/.github/blob/master/support.md
+[support]: https://github.com/remarkjs/.github/blob/HEAD/support.md
 
-[coc]: https://github.com/remarkjs/.github/blob/master/code-of-conduct.md
+[coc]: https://github.com/remarkjs/.github/blob/HEAD/code-of-conduct.md
 
 [license]: license
 
@@ -236,7 +236,7 @@ abide by its terms.
 
 [link]: https://github.com/syntax-tree/mdast#link
 
-[phrasingcontent]: https://github.com/syntax-tree/mdast/blob/master/readme.md#phrasingcontent
+[phrasingcontent]: https://github.com/syntax-tree/mdast/blob/HEAD/readme.md#phrasingcontent
 
 [formatters]: formatters.js
 
