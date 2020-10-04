@@ -4,6 +4,7 @@ var fs = require('fs')
 var path = require('path')
 var test = require('tape')
 var remark = require('remark')
+var gfm = require('remark-gfm')
 var vfile = require('to-vfile')
 var contributors = require('.')
 
@@ -18,6 +19,7 @@ test('remark-contributors', function (t) {
   t.plan(14)
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(read(path.join('fixtures', 'no-heading', 'index.md')), function (
       err,
@@ -34,6 +36,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {appendIfMissing: true})
     .process(read(path.join('fixtures', 'no-heading', 'index.md')), function (
       err,
@@ -52,6 +55,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(read(path.join('fixtures', 'existing', 'index.md')), function (
       err,
@@ -65,6 +69,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(read(path.join('fixtures', 'other-table', 'index.md')), function (
       err,
@@ -81,6 +86,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {
       formatters: {
         name: null,
@@ -118,6 +124,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {
       contributors: [
         {name: 'Sara', github: 'sara'},
@@ -144,6 +151,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {
       contributors: [
         {name: 'Hugh Kennedy', github: 'hughsk', twitter: '@hughskennedy'},
@@ -174,6 +182,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {
       formatters: {
         // Defaults:
@@ -217,6 +226,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {
       formatters: {
         social: {
@@ -259,6 +269,7 @@ test('remark-contributors', function (t) {
     })
 
   remark()
+    .use(gfm)
     .use(contributors, {align: 'left'})
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
@@ -283,6 +294,7 @@ test('remark-contributors', function (t) {
     )
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
@@ -301,6 +313,7 @@ test('remark-contributors', function (t) {
     )
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(
       read(
@@ -337,6 +350,7 @@ test('remark-contributors', function (t) {
     )
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(
       read(path.join('fixtures', 'invalid-package', 'index.md')),
@@ -349,6 +363,7 @@ test('remark-contributors', function (t) {
     )
 
   remark()
+    .use(gfm)
     .use(contributors)
     .process(
       read(path.join('fixtures', 'no-contributors', 'index.md')),

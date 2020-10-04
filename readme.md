@@ -10,6 +10,14 @@
 
 [**remark**][remark] plugin to inject a given list of contributors into a table.
 
+## Note!
+
+This plugin is ready for the new parser in remark
+([`micromark`](https://github.com/micromark/micromark),
+see [`remarkjs/remark#536`](https://github.com/remarkjs/remark/pull/536)).
+No change is needed: it works exactly the same now as it did before!
+(note that `remark-gfm` must be used as well to support tables)
+
 ## Install
 
 [npm][]:
