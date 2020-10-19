@@ -16,7 +16,7 @@ try {
 test.onFinish(ondone)
 
 test('remark-contributors', function (t) {
-  t.plan(14)
+  t.plan(15)
 
   remark()
     .use(gfm)
@@ -348,6 +348,16 @@ test('remark-contributors', function (t) {
         )
       }
     )
+
+  remark()
+    .use(gfm)
+    .use(contributors)
+    .process(vfile({contents: '...'}), function (err) {
+      t.ok(
+        /Missing required `path` on `file`/.test(err),
+        'should throw if no `path` is on `file`'
+      )
+    })
 
   remark()
     .use(gfm)

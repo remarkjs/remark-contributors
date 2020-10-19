@@ -22,8 +22,15 @@ function contributors(options) {
   function transform(tree, file, next) {
     if (defaultContributors) {
       done(defaultContributors)
-    } else {
+    } else if (file.dirname) {
+      // `dirname` is always set if there is a path: to `.` or a folder.
       findUp.one('package.json', path.resolve(file.cwd, file.dirname), onfound)
+    } else {
+      next(
+        new Error(
+          'Missing required `path` on `file`.\nMake sure it’s defined or pass `contributors` to `remark-contributors`'
+        )
+      )
     }
 
     function onfound(err, file) {

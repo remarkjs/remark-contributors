@@ -93,7 +93,8 @@ Inject a given list of contributors.
 ###### `options.contributors`
 
 List of contributors to inject (`Array.<Object>`).
-Defaults to the `contributors` field in the `package.json`, if there is one.
+Defaults to the `contributors` field in the closest `package.json` upwards from
+the processed [file][vfile], if there is one.
 Supports the string form (`name <email> (url)`) as well.
 Fails if no contributors are found or given.
 
@@ -253,3 +254,5 @@ abide by its terms.
 [rehype]: https://github.com/rehypejs/rehype
 
 [hast]: https://github.com/syntax-tree/hast
+
+[vfile]: https://github.com/vfile/vfile
