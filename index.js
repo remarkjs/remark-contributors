@@ -164,11 +164,9 @@ function createTable(contributors, formatters, align) {
       value = format(value, key, contributor)
 
       if (typeof value === 'string') {
-        if (isUrl(value)) {
-          value = u('link', {url: value}, [u('text', value)])
-        } else {
-          value = u('text', value)
-        }
+        value = isUrl(value)
+          ? u('link', {url: value}, [u('text', value)])
+          : u('text', value)
       }
 
       if (value === null || value === undefined) {
