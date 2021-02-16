@@ -51,7 +51,7 @@
     "tape": "^5.0.0",
     "tinyify": "^3.0.0",
     "to-vfile": "^6.0.0",
-    "xo": "^0.34.0"
+    "xo": "^0.37.0"
   },
   "scripts": {
     "#": "xo is currently broken as it somehow tries to parse broken `package.json` fixtures # && xo --fix",
@@ -81,6 +81,7 @@
     "prettier": true,
     "esnext": false,
     "rules": {
+      "unicorn/explicit-length-check": "off",
       "unicorn/prefer-includes": "off",
       "unicorn/prefer-optional-catch-binding": "off",
       "guard-for-in": "off"

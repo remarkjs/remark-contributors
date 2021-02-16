@@ -33,10 +33,10 @@ function contributors(options) {
       )
     }
 
-    function onfound(err, file) {
+    function onfound(error, file) {
       /* istanbul ignore if - `find-up` currently never passes errors. */
-      if (err) {
-        next(err)
+      if (error) {
+        next(error)
       } else if (file) {
         vfile.read(file, onread)
       } else {
@@ -44,13 +44,13 @@ function contributors(options) {
       }
     }
 
-    function onread(err, file) {
+    function onread(error, file) {
       var pack
 
       /* istanbul ignore if - files that are found but cannot be read are hard
        * to test. */
-      if (err) {
-        return next(err)
+      if (error) {
+        return next(error)
       }
 
       try {

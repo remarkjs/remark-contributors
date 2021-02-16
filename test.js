@@ -21,69 +21,72 @@ test('remark-contributors', function (t) {
   remark()
     .use(gfm)
     .use(contributors)
-    .process(read(path.join('fixtures', 'no-heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(read(path.join('fixtures', 'no-heading', 'expected.md')))
-        ],
-        'should not add a section by default'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'no-heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(read(path.join('fixtures', 'no-heading', 'expected.md')))
+          ],
+          'should not add a section by default'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
     .use(contributors, {appendIfMissing: true})
-    .process(read(path.join('fixtures', 'no-heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(
-            read(path.join('fixtures', 'no-heading', 'expected-if-append.md'))
-          )
-        ],
-        'should add a section if none exists and `appendIfMissing: true`'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'no-heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(
+              read(path.join('fixtures', 'no-heading', 'expected-if-append.md'))
+            )
+          ],
+          'should add a section if none exists and `appendIfMissing: true`'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
     .use(contributors)
-    .process(read(path.join('fixtures', 'existing', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [null, String(read(path.join('fixtures', 'existing', 'expected.md')))],
-        'should replace an existing table'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'existing', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(read(path.join('fixtures', 'existing', 'expected.md')))
+          ],
+          'should replace an existing table'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
     .use(contributors)
-    .process(read(path.join('fixtures', 'other-table', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(read(path.join('fixtures', 'other-table', 'expected.md')))
-        ],
-        'should not replace other tables'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'other-table', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(read(path.join('fixtures', 'other-table', 'expected.md')))
+          ],
+          'should not replace other tables'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
@@ -107,21 +110,21 @@ test('remark-contributors', function (t) {
         {name: 'Theo', commits: 19, age: 17}
       ]
     })
-    .process(read(path.join('fixtures', 'heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(
-            read(path.join('fixtures', 'heading', 'expected-if-custom.md'))
-          )
-        ],
-        'should support custom fields'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(
+              read(path.join('fixtures', 'heading', 'expected-if-custom.md'))
+            )
+          ],
+          'should support custom fields'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
@@ -132,23 +135,27 @@ test('remark-contributors', function (t) {
         {name: 'Alice', twitter: 'alice'}
       ]
     })
-    .process(read(path.join('fixtures', 'heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(
-            read(
-              path.join('fixtures', 'heading', 'expected-if-partial-custom.md')
+    .process(
+      read(path.join('fixtures', 'heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(
+              read(
+                path.join(
+                  'fixtures',
+                  'heading',
+                  'expected-if-partial-custom.md'
+                )
+              )
             )
-          )
-        ],
-        'should support partial github/twitter fields'
-      )
-    })
+          ],
+          'should support partial github/twitter fields'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
@@ -167,19 +174,21 @@ test('remark-contributors', function (t) {
         }
       ]
     })
-    .process(read(path.join('fixtures', 'heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(read(path.join('fixtures', 'heading', 'expected-complex.md')))
-        ],
-        'should support complex profiles'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(
+              read(path.join('fixtures', 'heading', 'expected-complex.md'))
+            )
+          ],
+          'should support complex profiles'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
@@ -209,21 +218,21 @@ test('remark-contributors', function (t) {
         }
       ]
     })
-    .process(read(path.join('fixtures', 'heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(
-            read(path.join('fixtures', 'heading', 'expected-formatters.md'))
-          )
-        ],
-        'should support formatters'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(
+              read(path.join('fixtures', 'heading', 'expected-formatters.md'))
+            )
+          ],
+          'should support formatters'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
@@ -254,19 +263,19 @@ test('remark-contributors', function (t) {
         {name: 'Alice', social: 'alice'}
       ]
     })
-    .process(read(path.join('fixtures', 'heading', 'index.md')), function (
-      err,
-      file
-    ) {
-      t.deepEqual(
-        [err, String(file)],
-        [
-          null,
-          String(read(path.join('fixtures', 'heading', 'expected-format.md')))
-        ],
-        'should support custom field formatters'
-      )
-    })
+    .process(
+      read(path.join('fixtures', 'heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(read(path.join('fixtures', 'heading', 'expected-format.md')))
+          ],
+          'should support custom field formatters'
+        )
+      }
+    )
 
   remark()
     .use(gfm)
