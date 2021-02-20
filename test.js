@@ -16,7 +16,7 @@ try {
 test.onFinish(ondone)
 
 test('remark-contributors', function (t) {
-  t.plan(15)
+  t.plan(16)
 
   remark()
     .use(gfm)
@@ -390,6 +390,25 @@ test('remark-contributors', function (t) {
         t.ok(
           /Missing required `contributors` in settings/.test(err),
           'should throw if no contributors are given or found'
+        )
+      }
+    )
+
+  remark()
+    .use(gfm)
+    .use(contributors, {
+      match: /^mitwirkende$/i
+    })
+    .process(
+      read(path.join('fixtures', 'match-heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(read(path.join('fixtures', 'match-heading', 'expected.md')))
+          ],
+          'should match custom heading if `match` option is passed'
         )
       }
     )
