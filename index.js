@@ -16,7 +16,7 @@ function contributors(options) {
   var align = settings.align || null
   var defaultContributors = settings.contributors
   var formatters = createFormatters(settings.formatters)
-  var contributorsHeadingRegexp = settings.match || /^contributors$/i
+  var contributorsHeadingRegexp = settings.heading || /^contributors$/i
 
   return transform
 

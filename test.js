@@ -397,7 +397,7 @@ test('remark-contributors', function (t) {
   remark()
     .use(gfm)
     .use(contributors, {
-      match: /^mitwirkende$/i
+      heading: /^mitwirkende$/i
     })
     .process(
       read(path.join('fixtures', 'match-heading', 'index.md')),
@@ -408,7 +408,7 @@ test('remark-contributors', function (t) {
             null,
             String(read(path.join('fixtures', 'match-heading', 'expected.md')))
           ],
-          'should match custom heading if `match` option is passed'
+          'should match custom heading if `heading` option is passed'
         )
       }
     )

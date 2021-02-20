@@ -84,7 +84,7 @@ MIT
 
 Inject a given list of contributors.
 
-*   Looks for the first heading matching `/^contributors$/i` or `options.match`
+*   Looks for the first heading matching `/^contributors$/i` or `options.heading`
 *   If no heading is found and `appendIfMissing` is set, inject such a heading
 *   Replaces the table in that section if there is one, or injects it otherwise
 
@@ -107,9 +107,9 @@ default: `null`).
 
 Inject the section if there is none (`boolean`, default: `false`).
 
-###### `options.match`
+###### `options.heading`
 
-Regular expression to match contributors heading (`regexp`, default: `/^contributors$/i`).
+Heading to look for (`regexp`, default: `/^contributors$/i`).
 
 ###### `options.formatters`
 
