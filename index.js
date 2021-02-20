@@ -16,6 +16,7 @@ function contributors(options) {
   var align = settings.align || null
   var defaultContributors = settings.contributors
   var formatters = createFormatters(settings.formatters)
+  var contributorsHeadingRegexp = settings.match || /^contributors$/i
 
   return transform
 
@@ -88,7 +89,7 @@ function contributors(options) {
       var table = createTable(contributors, formatters, align)
       var headingFound = false
 
-      heading(tree, 'contributors', onheading)
+      heading(tree, contributorsHeadingRegexp, onheading)
 
       // Add the section if not found but with `appendIfMissing`.
       if (!headingFound && settings.appendIfMissing) {
