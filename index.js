@@ -16,7 +16,18 @@ function contributors(options) {
   var align = settings.align || null
   var defaultContributors = settings.contributors
   var formatters = createFormatters(settings.formatters)
-  var contributorsHeadingRegexp = settings.heading || /^contributors$/i
+  var contributorsHeadingRegexp = /^contributors$/i
+
+  if (settings.heading) {
+    if (typeof settings.heading === 'string') {
+      contributorsHeadingRegexp = new RegExp(
+        '^(' + settings.heading + ')$',
+        'i'
+      )
+    } else {
+      contributorsHeadingRegexp = settings.heading
+    }
+  }
 
   return transform
 
