@@ -16,7 +16,7 @@ try {
 test.onFinish(ondone)
 
 test('remark-contributors', function (t) {
-  t.plan(16)
+  t.plan(17)
 
   remark()
     .use(gfm)
@@ -408,7 +408,26 @@ test('remark-contributors', function (t) {
             null,
             String(read(path.join('fixtures', 'match-heading', 'expected.md')))
           ],
-          'should match custom heading if `heading` option is passed'
+          'should match custom heading if `heading` option is passed a regex'
+        )
+      }
+    )
+
+  remark()
+    .use(gfm)
+    .use(contributors, {
+      heading: 'mitwirkende'
+    })
+    .process(
+      read(path.join('fixtures', 'match-heading', 'index.md')),
+      function (err, file) {
+        t.deepEqual(
+          [err, String(file)],
+          [
+            null,
+            String(read(path.join('fixtures', 'match-heading', 'expected.md')))
+          ],
+          'should match custom heading if `heading` option is passed a string'
         )
       }
     )
