@@ -109,7 +109,7 @@ Inject the section if there is none (`boolean`, default: `false`).
 
 ###### `options.heading`
 
-Heading to look for (`string` (case-insensitive) or `regexp`, default: `'contributors'`).
+Heading to look for (`string` (case-insensitive) or `RegExp`, default: `'contributors'`).
 
 ###### `options.formatters`
 
