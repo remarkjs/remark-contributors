@@ -23,9 +23,9 @@ test('remark-contributors', function (t) {
     .use(contributors)
     .process(
       read(path.join('fixtures', 'no-heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(read(path.join('fixtures', 'no-heading', 'expected.md')))
@@ -40,9 +40,9 @@ test('remark-contributors', function (t) {
     .use(contributors, {appendIfMissing: true})
     .process(
       read(path.join('fixtures', 'no-heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -59,9 +59,9 @@ test('remark-contributors', function (t) {
     .use(contributors)
     .process(
       read(path.join('fixtures', 'existing', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(read(path.join('fixtures', 'existing', 'expected.md')))
@@ -76,9 +76,9 @@ test('remark-contributors', function (t) {
     .use(contributors)
     .process(
       read(path.join('fixtures', 'other-table', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(read(path.join('fixtures', 'other-table', 'expected.md')))
@@ -112,9 +112,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -137,9 +137,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -176,9 +176,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -220,9 +220,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -265,9 +265,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(read(path.join('fixtures', 'heading', 'expected-format.md')))
@@ -282,9 +282,9 @@ test('remark-contributors', function (t) {
     .use(contributors, {align: 'left'})
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -307,9 +307,9 @@ test('remark-contributors', function (t) {
     .use(contributors)
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -335,9 +335,9 @@ test('remark-contributors', function (t) {
           'index.md'
         )
       ),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(
@@ -361,21 +361,27 @@ test('remark-contributors', function (t) {
   remark()
     .use(gfm)
     .use(contributors)
-    .process(vfile({contents: '...'}), function (err) {
+    .process(vfile({contents: '...'}), function (error) {
       t.ok(
-        /Missing required `path` on `file`/.test(err),
+        /Missing required `path` on `file`/.test(error),
         'should throw if no `path` is on `file`'
       )
     })
+
+  fs.writeFileSync(
+    path.join('fixtures', 'invalid-package', 'package.json'),
+    '{\n  "contributors": [\n'
+  )
 
   remark()
     .use(gfm)
     .use(contributors)
     .process(
       read(path.join('fixtures', 'invalid-package', 'index.md')),
-      function (err) {
+      function (error) {
+        fs.unlinkSync(path.join('fixtures', 'invalid-package', 'package.json'))
         t.ok(
-          /Unexpected end of JSON input/.test(err),
+          /Unexpected end of JSON input/.test(error),
           'should not swallow invalid `package.json` errors'
         )
       }
@@ -386,9 +392,9 @@ test('remark-contributors', function (t) {
     .use(contributors)
     .process(
       read(path.join('fixtures', 'no-contributors', 'index.md')),
-      function (err) {
+      function (error) {
         t.ok(
-          /Missing required `contributors` in settings/.test(err),
+          /Missing required `contributors` in settings/.test(error),
           'should throw if no contributors are given or found'
         )
       }
@@ -401,9 +407,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'match-heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(read(path.join('fixtures', 'match-heading', 'expected.md')))
@@ -420,9 +426,9 @@ test('remark-contributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'match-heading', 'index.md')),
-      function (err, file) {
+      function (error, file) {
         t.deepEqual(
-          [err, String(file)],
+          [error, String(file)],
           [
             null,
             String(read(path.join('fixtures', 'match-heading', 'expected.md')))
