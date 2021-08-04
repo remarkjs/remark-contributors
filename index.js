@@ -63,7 +63,7 @@
  *   *   `Formatter` — …or a proper formatter object
  */
 
-import path from 'path'
+import path from 'node:path'
 import isUrl from 'is-url'
 import {findUpOne} from 'vfile-find-up'
 import {read} from 'to-vfile'
