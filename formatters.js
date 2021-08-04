@@ -11,7 +11,7 @@ export const defaultFormatters = {
   name: {
     label: 'Name',
     format(value) {
-      return u('strong', [u('text', value)])
+      return u('strong', [u('text', String(value))])
     }
   },
   url: {label: 'Website'},
@@ -20,7 +20,8 @@ export const defaultFormatters = {
 }
 
 /** @type {Format} */
-function profile(value, key) {
+function profile(raw, key) {
+  let value = String(raw)
   let pos = value.toLowerCase().indexOf('.com/')
 
   // Automatically strip URL's in values from GitHub and Twitter

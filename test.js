@@ -239,7 +239,8 @@ test('remarkContributors', (t) => {
         social: {
           label: 'Social',
           // To simplify this test, don't wrap in links etc.
-          format(value) {
+          format(raw) {
+            const value = String(raw)
             const parts = value.split('@').length
 
             if (!value) {

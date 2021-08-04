@@ -11,7 +11,7 @@
  * @typedef {Record<string, FormatterObject>} FormatterObjects
  *
  * @callback Format
- * @param {string} value
+ * @param {unknown} value
  *   The value of a field in a contributor.
  * @param {string} key
  *   The name of a field in a contributor.
@@ -208,7 +208,9 @@ function createTable(contributors, formatters, align) {
       let value = format(
         contributor[key] === null || contributor[key] === undefined
           ? ''
-          : String(contributor[key]),
+          : typeof contributor[key] === 'number'
+          ? String(contributor[key])
+          : contributor[key],
         key,
         contributor
       )
