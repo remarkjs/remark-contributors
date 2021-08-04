@@ -3,7 +3,7 @@ import path from 'path'
 import test from 'tape'
 import remark from 'remark'
 import gfm from 'remark-gfm'
-import vfile from 'to-vfile'
+import {toVFile} from 'to-vfile'
 import remarkContributors from './index.js'
 
 // Hide our project’s `package.json`.
@@ -359,7 +359,7 @@ test('remarkContributors', function (t) {
   remark()
     .use(gfm)
     .use(remarkContributors)
-    .process(vfile({contents: '...'}), function (error) {
+    .process(toVFile({value: '...'}), function (error) {
       t.ok(
         /Missing required `path` on `file`/.test(error),
         'should throw if no `path` is on `file`'
@@ -438,8 +438,8 @@ test('remarkContributors', function (t) {
 })
 
 function read(fp) {
-  var file = vfile.readSync(fp)
-  file.contents = String(file.contents).replace(/\r\n/g, '\n')
+  var file = toVFile.readSync(fp)
+  file.value = String(file).replace(/\r\n/g, '\n')
   return file
 }
 

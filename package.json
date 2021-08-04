@@ -37,11 +37,12 @@
     "index.js"
   ],
   "dependencies": {
-    "is-url": "^1.2.2",
-    "mdast-util-heading-range": "^2.1.2",
+    "is-url": "^1.0.0",
+    "mdast-util-heading-range": "^3.0.0",
     "parse-author": "^2.0.0",
-    "unist-builder": "^2.0.0",
-    "vfile-find-up": "^5.0.0"
+    "unist-builder": "^3.0.0",
+    "vfile-find-up": "^6.0.0",
+    "to-vfile": "^7.0.0"
   },
   "devDependencies": {
     "c8": "^7.0.0",
@@ -51,7 +52,6 @@
     "remark-gfm": "^1.0.0",
     "remark-preset-wooorm": "^8.0.0",
     "tape": "^5.0.0",
-    "to-vfile": "^6.0.0",
     "xo": "^0.38.0"
   },
   "scripts": {

@@ -1,10 +1,10 @@
 import path from 'path'
 import isUrl from 'is-url'
-import findUp from 'vfile-find-up'
-import vfile from 'to-vfile'
+import {findUpOne} from 'vfile-find-up'
+import {read} from 'to-vfile'
 import parse from 'parse-author'
-import heading from 'mdast-util-heading-range'
-import u from 'unist-builder'
+import {headingRange} from 'mdast-util-heading-range'
+import {u} from 'unist-builder'
 import {defaultFormatters} from './formatters.js'
 
 export default function remarkContributors(options) {
@@ -21,7 +21,7 @@ export default function remarkContributors(options) {
       done(defaultContributors)
     } else if (file.dirname) {
       // `dirname` is always set if there is a path: to `.` or a folder.
-      findUp.one('package.json', path.resolve(file.cwd, file.dirname), onfound)
+      findUpOne('package.json', path.resolve(file.cwd, file.dirname), onfound)
     } else {
       next(
         new Error(
@@ -36,7 +36,7 @@ export default function remarkContributors(options) {
       if (error) {
         next(error)
       } else if (file) {
-        vfile.read(file, onread)
+        read(file, onread)
       } else {
         done([])
       }
@@ -86,7 +86,7 @@ export default function remarkContributors(options) {
       var table = createTable(contributors, formatters, align)
       var headingFound = false
 
-      heading(tree, contributorsHeading, onheading)
+      headingRange(tree, contributorsHeading, onheading)
 
       // Add the section if not found but with `appendIfMissing`.
       if (!headingFound && settings.appendIfMissing) {
