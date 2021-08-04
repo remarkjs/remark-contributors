@@ -1,8 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import test from 'tape'
-import remark from 'remark'
-import gfm from 'remark-gfm'
+import {remark} from 'remark'
+import remarkGfm from 'remark-gfm'
 import {toVFile} from 'to-vfile'
 import remarkContributors from './index.js'
 
@@ -17,7 +17,7 @@ test('remarkContributors', function (t) {
   t.plan(17)
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'no-heading', 'index.md')),
@@ -34,7 +34,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {appendIfMissing: true})
     .process(
       read(path.join('fixtures', 'no-heading', 'index.md')),
@@ -53,7 +53,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'existing', 'index.md')),
@@ -70,7 +70,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'other-table', 'index.md')),
@@ -87,7 +87,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       formatters: {
         name: null,
@@ -125,7 +125,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       contributors: [
         {name: 'Sara', github: 'sara'},
@@ -156,7 +156,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       contributors: [
         {name: 'Hugh Kennedy', github: 'hughsk', twitter: '@hughskennedy'},
@@ -189,7 +189,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       formatters: {
         // Defaults:
@@ -233,7 +233,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       formatters: {
         social: {
@@ -276,7 +276,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {align: 'left'})
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
@@ -301,7 +301,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
@@ -320,7 +320,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(
@@ -357,7 +357,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(toVFile({value: '...'}), function (error) {
       t.ok(
@@ -372,7 +372,7 @@ test('remarkContributors', function (t) {
   )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'invalid-package', 'index.md')),
@@ -386,7 +386,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'no-contributors', 'index.md')),
@@ -399,7 +399,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       heading: /^mitwirkende$/i
     })
@@ -418,7 +418,7 @@ test('remarkContributors', function (t) {
     )
 
   remark()
-    .use(gfm)
+    .use(remarkGfm)
     .use(remarkContributors, {
       heading: 'mitwirkende'
     })
