@@ -1,17 +1,13 @@
-'use strict'
+import path from 'path'
+import isUrl from 'is-url'
+import findUp from 'vfile-find-up'
+import vfile from 'to-vfile'
+import parse from 'parse-author'
+import heading from 'mdast-util-heading-range'
+import u from 'unist-builder'
+import {defaultFormatters} from './formatters.js'
 
-var path = require('path')
-var isUrl = require('is-url')
-var findUp = require('vfile-find-up')
-var vfile = require('to-vfile')
-var parse = require('parse-author')
-var heading = require('mdast-util-heading-range')
-var u = require('unist-builder')
-var defaultFormatters = require('./formatters.js')
-
-module.exports = contributors
-
-function contributors(options) {
+export default function remarkContributors(options) {
   var settings = options || {}
   var align = settings.align || null
   var defaultContributors = settings.contributors

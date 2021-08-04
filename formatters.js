@@ -1,33 +1,29 @@
-'use strict'
-
-var u = require('unist-builder')
+import u from 'unist-builder'
 
 var https = 'https://'
 var com = '.com/'
 var slash = '/'
 var at = '@'
 
-exports.email = {
-  exclude: true
-}
-
-exports.name = {
-  label: 'Name',
-  format: name
-}
-
-exports.url = {
-  label: 'Website'
-}
-
-exports.github = {
-  label: 'GitHub',
-  format: profile
-}
-
-exports.twitter = {
-  label: 'Twitter',
-  format: profile
+export const defaultFormatters = {
+  email: {
+    exclude: true
+  },
+  name: {
+    label: 'Name',
+    format: name
+  },
+  url: {
+    label: 'Website'
+  },
+  github: {
+    label: 'GitHub',
+    format: profile
+  },
+  twitter: {
+    label: 'Twitter',
+    format: profile
+  }
 }
 
 function name(value) {
