@@ -1,5 +1,11 @@
+/**
+ * @typedef {import('./index.js').FormatterObjects} FormatterObjects
+ * @typedef {import('./index.js').Format} Format
+ */
+
 import {u} from 'unist-builder'
 
+/** @type {FormatterObjects} */
 export const defaultFormatters = {
   email: {exclude: true},
   name: {
@@ -13,6 +19,7 @@ export const defaultFormatters = {
   twitter: {label: 'Twitter', format: profile}
 }
 
+/** @type {Format} */
 function profile(value, key) {
   let pos = value.toLowerCase().indexOf('.com/')
 

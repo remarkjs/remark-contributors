@@ -142,9 +142,11 @@ Formatters have the following properties:
 *   `label` — text in the header row that labels the column for this field
 *   `exclude` — whether to ignore these fields (default: `false`)
 *   `format` — function called with `value, key, contributor` to format
-    the value.  Expected to return [PhrasingContent][].  Can return null or
-    undefined (ignored), a string (wrapped in a [text][] node), a string that
-    looks like a URL (wrapped in a [link][]), one node, or multiple nodes
+    the value.
+    Expected to return [PhrasingContent][].
+    Can return null or undefined (ignored), a string (wrapped in a [text][]
+    node), a string that looks like a URL (wrapped in a [link][]), one node,
+    or multiple nodes
 
 ##### Notes
 

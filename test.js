@@ -361,7 +361,7 @@ test('remarkContributors', (t) => {
     .use(remarkContributors)
     .process(toVFile({value: '...'}), (error) => {
       t.ok(
-        /Missing required `path` on `file`/.test(error),
+        /Missing required `path` on `file`/.test(String(error)),
         'should throw if no `path` is on `file`'
       )
     })
@@ -379,7 +379,7 @@ test('remarkContributors', (t) => {
       (error) => {
         fs.unlinkSync(path.join('fixtures', 'invalid-package', 'package.json'))
         t.ok(
-          /Unexpected end of JSON input/.test(error),
+          /Unexpected end of JSON input/.test(String(error)),
           'should not swallow invalid `package.json` errors'
         )
       }
@@ -392,7 +392,7 @@ test('remarkContributors', (t) => {
       read(path.join('fixtures', 'no-contributors', 'index.md')),
       (error) => {
         t.ok(
-          /Missing required `contributors` in settings/.test(error),
+          /Missing required `contributors` in settings/.test(String(error)),
           'should throw if no contributors are given or found'
         )
       }
@@ -437,6 +437,9 @@ test('remarkContributors', (t) => {
     )
 })
 
+/**
+ * @param {string} fp
+ */
 function read(fp) {
   const file = toVFile.readSync(fp)
   file.value = String(file).replace(/\r\n/g, '\n')

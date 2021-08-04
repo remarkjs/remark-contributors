@@ -1,3 +1,68 @@
+/**
+ * @typedef {import('mdast').Root} Root
+ * @typedef {import('mdast').PhrasingContent} PhrasingContent
+ * @typedef {import('mdast').BlockContent} BlockContent
+ * @typedef {import('mdast').TableContent} TableContent
+ * @typedef {import('mdast').RowContent} RowContent
+ * @typedef {import('mdast').AlignType} AlignType
+ * @typedef {import('vfile').VFile} VFile
+ * @typedef {Record<string, unknown>} ContributorObject
+ * @typedef {ContributorObject|string} Contributor
+ * @typedef {Record<string, FormatterObject>} FormatterObjects
+ *
+ * @callback Format
+ * @param {string} value
+ *   The value of a field in a contributor.
+ * @param {string} key
+ *   The name of a field in a contributor.
+ * @param {Contributor} contributor
+ *   The whole contributor.
+ * @returns {null|undefined|string|PhrasingContent|PhrasingContent[]}
+ *
+ * @typedef FormatterObject
+ * @property {string} [label]
+ *   Text in the header row that labels the column for this field.
+ * @property {boolean} [exclude=false]
+ *   Whether to ignore these fields.
+ * @property {Format} [format]
+ *   How to format the cell.
+ *
+ * @typedef {string|boolean|null|undefined|FormatterObject} Formatter
+ *
+ * @typedef {Record<string, Formatter>} Formatters
+ *
+ * @typedef Options
+ *   Configuration.
+ * @property {Contributor[]} [contributors]
+ *   List of contributors to inject.
+ *   Defaults to the `contributors` field in the closest `package.json` upwards
+ *   from the processed file, if there is one.
+ *   Supports the string form (`name <email> (url)`) as well.
+ *   Fails if no contributors are found or given.
+ * @property {AlignType} [align]
+ *   Alignment to use for all cells in the table.
+ * @property {boolean} [appendIfMissing=false]
+ *   Inject the section if there is none.
+ * @property {string|RegExp} [heading='contributors']
+ *   Heading to look for.
+ * @property {Formatters} [formatters=[]]
+ *   Map of fields found in `contributors` to formatters.
+ *   These given formatters extend the default formatters.
+ *
+ *   The keys in `formatters` should correspond directly (case-sensitive) to
+ *   keys in `contributors`.
+ *
+ *   The values can be:
+ *
+ *   *   `null` or `undefined` — does nothing.
+ *   *   `false` — shortcut for `{label: key, exclude: true}`, can be used to
+ *       exclude default formatters.
+ *   *   `true` — shortcut for `{label: key}`, can be used to include default
+ *        formatters (like `email`)
+ *   *   `string` — shortcut for `{label: value}`
+ *   *   `Formatter` — …or a proper formatter object
+ */
+
 import path from 'path'
 import isUrl from 'is-url'
 import {findUpOne} from 'vfile-find-up'
@@ -9,16 +74,20 @@ import {defaultFormatters} from './formatters.js'
 
 const own = {}.hasOwnProperty
 
-export default function remarkContributors(options) {
-  const settings = options || {}
-  const align = settings.align || null
-  const defaultContributors = settings.contributors
-  const formatters = createFormatters(settings.formatters)
-  const contributorsHeading = settings.heading || 'contributors'
+/**
+ * Plugin to inject a given list of contributors into a table.
+ *
+ * @type {import('unified').Plugin<[Options?] | void[], Root>}
+ * @returns {(node: Root, file: VFile) => Promise<void>}
+ */
+export default function remarkContributors(options = {}) {
+  const align = options.align || null
+  const defaultContributors = options.contributors
+  const formatters = createFormatters(options.formatters)
+  const contributorsHeading = options.heading || 'contributors'
 
-  return transform
-
-  async function transform(tree, file) {
+  return async (tree, file) => {
+    /** @type {Contributor[]|undefined} */
     let rawContributors
 
     if (defaultContributors) {
@@ -32,7 +101,9 @@ export default function remarkContributors(options) {
 
       if (packageFile) {
         await read(packageFile)
-        rawContributors = JSON.parse(String(packageFile)).contributors
+        /** @type {import('type-fest').PackageJson} */
+        const pack = JSON.parse(String(packageFile))
+        rawContributors = pack.contributors
       }
     } else {
       throw new Error(
@@ -40,12 +111,14 @@ export default function remarkContributors(options) {
       )
     }
 
+    /** @type {ContributorObject[]} */
     const contributors = []
     let index = -1
 
     if (rawContributors) {
       while (++index < rawContributors.length) {
         const value = rawContributors[index]
+        // @ts-expect-error: indexable.
         contributors.push(typeof value === 'string' ? parse(value) : value)
       }
     }
@@ -59,45 +132,54 @@ export default function remarkContributors(options) {
     const table = createTable(contributors, formatters, align)
     let headingFound = false
 
-    headingRange(tree, contributorsHeading, onheading)
-
-    // Add the section if not found but with `appendIfMissing`.
-    if (!headingFound && settings.appendIfMissing) {
-      tree.children.push(
-        u('heading', {depth: 2}, [u('text', 'Contributors')]),
-        table
-      )
-    }
-
-    function onheading(start, nodes, end) {
+    headingRange(tree, contributorsHeading, (start, nodes, end) => {
+      let siblings = /** @type {BlockContent[]} */ (nodes)
       let index = -1
-      let tableFound
+      let tableFound = false
 
       headingFound = true
 
-      while (++index < nodes.length) {
-        const node = nodes[index]
+      while (++index < siblings.length) {
+        const node = siblings[index]
 
         if (node.type === 'table') {
           tableFound = true
-          nodes = nodes.slice(0, index).concat(table, nodes.slice(index + 1))
+          siblings = siblings
+            .slice(0, index)
+            .concat(table, siblings.slice(index + 1))
           break
         }
       }
 
       if (!tableFound) {
-        nodes = [table].concat(nodes)
+        siblings = [table, ...siblings]
       }
 
-      return [start].concat(nodes, end)
+      return [start, ...siblings, end]
+    })
+
+    // Add the section if not found but with `appendIfMissing`.
+    if (!headingFound && options.appendIfMissing) {
+      tree.children.push(
+        {type: 'heading', depth: 2, children: [u('text', 'Contributors')]},
+        table
+      )
     }
   }
 }
 
+/**
+ * @param {ContributorObject[]} contributors
+ * @param {FormatterObjects} formatters
+ * @param {AlignType} align
+ */
 function createTable(contributors, formatters, align) {
   const keys = createKeys(contributors, formatters)
+  /** @type {TableContent[]} */
   const rows = []
+  /** @type {RowContent[]} */
   const cells = []
+  /** @type {AlignType[]} */
   const aligns = []
   let rowIndex = -1
   let cellIndex = -1
@@ -113,21 +195,23 @@ function createTable(contributors, formatters, align) {
 
   while (++rowIndex < contributors.length) {
     const contributor = contributors[rowIndex]
+    /** @type {RowContent[]} */
     const cells = []
     let cellIndex = -1
 
     while (++cellIndex < keys.length) {
       const key = keys[cellIndex]
-      const format = (formatters[key] && formatters[key].format) || ((d) => d)
-      let value = contributor[key]
+      const format =
+        (formatters[key] && formatters[key].format) ||
+        /** @type {Format} */ ((d) => d)
 
-      if (value === null || value === undefined) {
-        value = ''
-      } else if (typeof value === 'number') {
-        value = String(value)
-      }
-
-      value = format(value, key, contributor)
+      let value = format(
+        contributor[key] === null || contributor[key] === undefined
+          ? ''
+          : String(contributor[key]),
+        key,
+        contributor
+      )
 
       if (typeof value === 'string') {
         value = isUrl(value)
@@ -137,7 +221,7 @@ function createTable(contributors, formatters, align) {
 
       if (value === null || value === undefined) {
         value = []
-      } else if (typeof value.length !== 'number') {
+      } else if (!Array.isArray(value)) {
         value = [value]
       }
 
@@ -150,12 +234,19 @@ function createTable(contributors, formatters, align) {
   return u('table', {align: aligns}, rows)
 }
 
+/**
+ * @param {ContributorObject[]} contributors
+ * @param {FormatterObjects} formatters
+ * @returns {string[]}
+ */
 function createKeys(contributors, formatters) {
+  /** @type {string[]} */
   const labels = []
   let index = -1
 
   while (++index < contributors.length) {
     const contributor = contributors[index]
+    /** @type {string} */
     let field
 
     for (field in contributor) {
@@ -176,6 +267,10 @@ function createKeys(contributors, formatters) {
   return labels
 }
 
+/**
+ * @param {Formatters|undefined} headers
+ * @returns {FormatterObjects}
+ */
 function createFormatters(headers) {
   const formatters = Object.assign({}, defaultFormatters)
 
@@ -183,6 +278,7 @@ function createFormatters(headers) {
     return formatters
   }
 
+  /** @type {string} */
   let key
 
   for (key in headers) {
