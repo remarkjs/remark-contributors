@@ -52,7 +52,7 @@
     "remark-gfm": "^1.0.0",
     "remark-preset-wooorm": "^8.0.0",
     "tape": "^5.0.0",
-    "xo": "^0.38.0"
+    "xo": "^0.39.0"
   },
   "scripts": {
     "format": "remark . -qfo && prettier . -w --loglevel warn  && xo --fix",
@@ -69,20 +69,12 @@
     "trailingComma": "none"
   },
   "xo": {
-    "prettier": true,
-    "rules": {
-      "no-var": "off",
-      "prefer-arrow-callback": "off",
-      "unicorn/explicit-length-check": "off",
-      "unicorn/prefer-includes": "off",
-      "unicorn/prefer-optional-catch-binding": "off",
-      "guard-for-in": "off"
-    }
+    "prettier": true
   },
   "remarkConfig": {
     "plugins": [
       "preset-wooorm",
-      "."
+      "./index.js"
     ]
   }
 }

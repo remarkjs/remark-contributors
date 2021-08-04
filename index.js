@@ -7,12 +7,14 @@ import {headingRange} from 'mdast-util-heading-range'
 import {u} from 'unist-builder'
 import {defaultFormatters} from './formatters.js'
 
+const own = {}.hasOwnProperty
+
 export default function remarkContributors(options) {
-  var settings = options || {}
-  var align = settings.align || null
-  var defaultContributors = settings.contributors
-  var formatters = createFormatters(settings.formatters)
-  var contributorsHeading = settings.heading || 'contributors'
+  const settings = options || {}
+  const align = settings.align || null
+  const defaultContributors = settings.contributors
+  const formatters = createFormatters(settings.formatters)
+  const contributorsHeading = settings.heading || 'contributors'
 
   return transform
 
@@ -43,7 +45,7 @@ export default function remarkContributors(options) {
     }
 
     function onread(error, file) {
-      var pack
+      let pack
 
       // Files that are found but cannot be read are hard to test.
       /* c8 ignore next 3 */
@@ -61,14 +63,14 @@ export default function remarkContributors(options) {
     }
 
     function done(values) {
-      var contributors = []
-      var length = values && values.length
-      var index = -1
-      var value
+      const contributors = []
+      let index = -1
 
-      while (++index < length) {
-        value = values[index]
-        contributors.push(typeof value === 'string' ? parse(value) : value)
+      if (values) {
+        while (++index < values.length) {
+          const value = values[index]
+          contributors.push(typeof value === 'string' ? parse(value) : value)
+        }
       }
 
       if (contributors.length === 0) {
@@ -83,8 +85,8 @@ export default function remarkContributors(options) {
     }
 
     function oncontributors(contributors) {
-      var table = createTable(contributors, formatters, align)
-      var headingFound = false
+      const table = createTable(contributors, formatters, align)
+      let headingFound = false
 
       headingRange(tree, contributorsHeading, onheading)
 
@@ -99,15 +101,13 @@ export default function remarkContributors(options) {
       next()
 
       function onheading(start, nodes, end) {
-        var length = nodes.length
-        var index = -1
-        var node
-        var tableFound
+        let index = -1
+        let tableFound
 
         headingFound = true
 
-        while (++index < length) {
-          node = nodes[index]
+        while (++index < nodes.length) {
+          const node = nodes[index]
 
           if (node.type === 'table') {
             tableFound = true
@@ -127,38 +127,31 @@ export default function remarkContributors(options) {
 }
 
 function createTable(contributors, formatters, align) {
-  var keys = createKeys(contributors, formatters)
-  var length = contributors.length
-  var count = keys.length
-  var index = -1
-  var rows = []
-  var offset = -1
-  var contributor
-  var key
-  var cells = []
-  var aligns = []
-  var value
-  var format
+  const keys = createKeys(contributors, formatters)
+  const rows = []
+  const cells = []
+  const aligns = []
+  let rowIndex = -1
+  let cellIndex = -1
 
-  while (++offset < count) {
-    key = keys[offset]
-    value = (formatters[key] && formatters[key].label) || key
-
-    aligns[offset] = align
-    cells[offset] = u('tableCell', [u('text', value)])
+  while (++cellIndex < keys.length) {
+    const key = keys[cellIndex]
+    const value = (formatters[key] && formatters[key].label) || key
+    aligns[cellIndex] = align
+    cells[cellIndex] = u('tableCell', [u('text', value)])
   }
 
   rows.push(u('tableRow', cells))
 
-  while (++index < length) {
-    contributor = contributors[index]
-    offset = -1
-    cells = []
+  while (++rowIndex < contributors.length) {
+    const contributor = contributors[rowIndex]
+    const cells = []
+    let cellIndex = -1
 
-    while (++offset < count) {
-      key = keys[offset]
-      format = (formatters[key] && formatters[key].format) || identity
-      value = contributor[key]
+    while (++cellIndex < keys.length) {
+      const key = keys[cellIndex]
+      const format = (formatters[key] && formatters[key].format) || identity
+      let value = contributor[key]
 
       if (value === null || value === undefined) {
         value = ''
@@ -180,7 +173,7 @@ function createTable(contributors, formatters, align) {
         value = [value]
       }
 
-      cells[offset] = u('tableCell', value)
+      cells[cellIndex] = u('tableCell', value)
     }
 
     rows.push(u('tableRow', cells))
@@ -190,25 +183,25 @@ function createTable(contributors, formatters, align) {
 }
 
 function createKeys(contributors, formatters) {
-  var length = contributors.length
-  var index = -1
-  var labels = []
-  var contributor
-  var field
-  var formatter
+  const length = contributors.length
+  let index = -1
+  const labels = []
 
   while (++index < length) {
-    contributor = contributors[index]
+    const contributor = contributors[index]
+    let field
 
     for (field in contributor) {
-      formatter = formatters[field.toLowerCase()]
+      if (own.call(contributor, field)) {
+        const formatter = formatters[field.toLowerCase()]
 
-      if (formatter && formatter.exclude) {
-        continue
-      }
+        if (formatter && formatter.exclude) {
+          continue
+        }
 
-      if (labels.indexOf(field) === -1) {
-        labels.push(field)
+        if (!labels.includes(field)) {
+          labels.push(field)
+        }
       }
     }
   }
@@ -217,26 +210,28 @@ function createKeys(contributors, formatters) {
 }
 
 function createFormatters(headers) {
-  var formatters = Object.assign({}, defaultFormatters)
-  var key
-  var formatter
+  const formatters = Object.assign({}, defaultFormatters)
 
   if (!headers) {
     return formatters
   }
 
+  let key
+
   for (key in headers) {
-    formatter = headers[key]
+    if (own.call(headers, key)) {
+      let formatter = headers[key]
 
-    if (typeof formatter === 'string') {
-      formatter = {label: formatter}
-    } else if (typeof formatter === 'boolean') {
-      formatter = {label: key, exclude: !formatter}
-    } else if (formatter === null || typeof formatter !== 'object') {
-      continue
+      if (typeof formatter === 'string') {
+        formatter = {label: formatter}
+      } else if (typeof formatter === 'boolean') {
+        formatter = {label: key, exclude: !formatter}
+      } else if (formatter === null || typeof formatter !== 'object') {
+        continue
+      }
+
+      formatters[key] = formatter
     }
-
-    formatters[key] = formatter
   }
 
   return formatters

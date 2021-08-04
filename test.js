@@ -9,11 +9,11 @@ import remarkContributors from './index.js'
 // Hide our project’s `package.json`.
 try {
   fs.renameSync('package.json', 'package.json.bak')
-} catch (_) {}
+} catch {}
 
 test.onFinish(ondone)
 
-test('remarkContributors', function (t) {
+test('remarkContributors', (t) => {
   t.plan(17)
 
   remark()
@@ -21,7 +21,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'no-heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -38,7 +38,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors, {appendIfMissing: true})
     .process(
       read(path.join('fixtures', 'no-heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -57,7 +57,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'existing', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -74,7 +74,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'other-table', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -110,7 +110,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -135,7 +135,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -174,7 +174,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -218,7 +218,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -240,7 +240,7 @@ test('remarkContributors', function (t) {
           label: 'Social',
           // To simplify this test, don't wrap in links etc.
           format(value) {
-            var parts = value.split('@').length
+            const parts = value.split('@').length
 
             if (!value) {
               return null
@@ -263,7 +263,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -280,7 +280,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors, {align: 'left'})
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -305,7 +305,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'heading-contributors', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -333,7 +333,7 @@ test('remarkContributors', function (t) {
           'index.md'
         )
       ),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -359,7 +359,7 @@ test('remarkContributors', function (t) {
   remark()
     .use(remarkGfm)
     .use(remarkContributors)
-    .process(toVFile({value: '...'}), function (error) {
+    .process(toVFile({value: '...'}), (error) => {
       t.ok(
         /Missing required `path` on `file`/.test(error),
         'should throw if no `path` is on `file`'
@@ -376,7 +376,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'invalid-package', 'index.md')),
-      function (error) {
+      (error) => {
         fs.unlinkSync(path.join('fixtures', 'invalid-package', 'package.json'))
         t.ok(
           /Unexpected end of JSON input/.test(error),
@@ -390,7 +390,7 @@ test('remarkContributors', function (t) {
     .use(remarkContributors)
     .process(
       read(path.join('fixtures', 'no-contributors', 'index.md')),
-      function (error) {
+      (error) => {
         t.ok(
           /Missing required `contributors` in settings/.test(error),
           'should throw if no contributors are given or found'
@@ -405,7 +405,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'match-heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -424,7 +424,7 @@ test('remarkContributors', function (t) {
     })
     .process(
       read(path.join('fixtures', 'match-heading', 'index.md')),
-      function (error, file) {
+      (error, file) => {
         t.deepEqual(
           [error, String(file)],
           [
@@ -438,7 +438,7 @@ test('remarkContributors', function (t) {
 })
 
 function read(fp) {
-  var file = toVFile.readSync(fp)
+  const file = toVFile.readSync(fp)
   file.value = String(file).replace(/\r\n/g, '\n')
   return file
 }
@@ -446,5 +446,5 @@ function read(fp) {
 function ondone() {
   try {
     fs.renameSync('package.json.bak', 'package.json')
-  } catch (_) {}
+  } catch {}
 }
