@@ -20,6 +20,9 @@ No change is needed: it works exactly the same now as it did before!
 
 ## Install
 
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c):
+Node 12+ is needed to use it and it must be `import`ed instead of `require`d.
+
 [npm][]:
 
 ```sh
@@ -45,14 +48,16 @@ MIT
 And our script, `example.js`, looks as follows:
 
 ```js
-var vfile = require('to-vfile')
-var remark = require('remark')
-var contributors = require('remark-contributors')
+import {readSync} from 'to-vfile'
+import {remark} from 'remark'
+import remarkContributors from 'remark-contributors'
+
+const file = readSync('example.md')
 
 remark()
-  .use(contributors)
-  .process(vfile.readSync('example.md'), function(err, file) {
-    if (err) throw err
+  .use(remarkContributors)
+  .process(file)
+  .then((file) => {
     console.log(String(file))
   })
 ```
@@ -80,7 +85,10 @@ MIT
 
 ## API
 
-### `remark().use(contributors[, options])`
+This package exports no identifiers.
+The default export is `remarkContributors`.
+
+### `unified().use(remarkContributors[, options])`
 
 Inject a given list of contributors.
 
