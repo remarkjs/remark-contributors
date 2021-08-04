@@ -7,7 +7,7 @@ var vfile = require('to-vfile')
 var parse = require('parse-author')
 var heading = require('mdast-util-heading-range')
 var u = require('unist-builder')
-var defaultFormatters = require('./formatters')
+var defaultFormatters = require('./formatters.js')
 
 module.exports = contributors
 
@@ -35,7 +35,8 @@ function contributors(options) {
     }
 
     function onfound(error, file) {
-      /* istanbul ignore if - `find-up` currently never passes errors. */
+      // `find-up` currently never passes errors.
+      /* c8 ignore next 3 */
       if (error) {
         next(error)
       } else if (file) {
@@ -48,8 +49,8 @@ function contributors(options) {
     function onread(error, file) {
       var pack
 
-      /* istanbul ignore if - files that are found but cannot be read are hard
-       * to test. */
+      // Files that are found but cannot be read are hard to test.
+      /* c8 ignore next 3 */
       if (error) {
         return next(error)
       }
