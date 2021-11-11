@@ -100,7 +100,7 @@ Inject a given list of contributors.
 
 ###### `options.contributors`
 
-List of contributors to inject (`Array.<Object>`).
+List of contributors to inject (`Array<Object>`).
 Defaults to the `contributors` field in the closest `package.json` upwards from
 the processed [file][vfile], if there is one.
 Supports the string form (`name <email> (url)`) as well.
@@ -117,11 +117,13 @@ Inject the section if there is none (`boolean`, default: `false`).
 
 ###### `options.heading`
 
-Heading to look for (`string` (case-insensitive) or `RegExp`, default: `'contributors'`).
+Heading to look for (`string` (case-insensitive) or `RegExp`, default:
+`'contributors'`).
 
 ###### `options.formatters`
 
-Map of fields found in `contributors` to formatters (`Object.<Formatter>`).
+Map of fields found in `contributors` to formatters (`Record<string,
+Formatter>`).
 These given formatters extend the [default formatters][formatters].
 
 The keys in `formatters` should correspond directly (case-sensitive) to keys in
@@ -261,7 +263,7 @@ abide by its terms.
 
 [phrasingcontent]: https://github.com/syntax-tree/mdast/blob/HEAD/readme.md#phrasingcontent
 
-[formatters]: formatters.js
+[formatters]: lib/formatters.js
 
 [xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
 
