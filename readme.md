@@ -184,7 +184,7 @@ Heading to look for (`string` (case-insensitive) or `RegExp`, default:
 
 ###### `options.formatters`
 
-Map of fields as found in `contributors` to formatters (`Record<string,
+Map of fields found in `contributors` to formatters (`Record<string,
 Formatter>`).
 These given formatters extend the [default formatters][formatters].
 
