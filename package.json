@@ -1,6 +1,6 @@
 {
   "name": "remark-contributors",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "remark plugin to inject a given list of contributors into a table",
   "license": "MIT",
   "keywords": [
