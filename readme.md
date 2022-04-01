@@ -64,17 +64,17 @@ In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
 npm install remark-contributors
 ```
 
-In Deno with [Skypack][]:
+In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import remarkContributors from 'https://cdn.skypack.dev/remark-contributors@6?dts'
+import remarkContributors from 'https://esm.sh/remark-contributors@6'
 ```
 
-In browsers with [Skypack][]:
+In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import remarkContributors from 'https://cdn.skypack.dev/remark-contributors@6?min'
+  import remarkContributors from 'https://esm.sh/remark-contributors@6?bundle'
 </script>
 ```
 
@@ -441,7 +441,7 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
-[skypack]: https://www.skypack.dev
+[esmsh]: https://esm.sh
 
 [health]: https://github.com/remarkjs/.github
 
