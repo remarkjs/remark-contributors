@@ -44,16 +44,16 @@
     "index.js"
   ],
   "dependencies": {
-    "@types/mdast": "^3.0.0",
+    "@types/mdast": "^4.0.0",
     "is-url": "^1.0.0",
-    "mdast-util-heading-range": "^3.0.0",
+    "mdast-util-heading-range": "^4.0.0",
     "parse-author": "^2.0.0",
-    "to-vfile": "^7.0.0",
+    "to-vfile": "^8.0.0",
     "type-fest": "^4.0.0",
-    "unified": "^10.0.0",
-    "unist-builder": "^3.0.0",
-    "vfile": "^5.0.0",
-    "vfile-find-up": "^6.0.0"
+    "unified": "^11.0.0",
+    "unist-builder": "^4.0.0",
+    "vfile": "^6.0.0",
+    "vfile-find-up": "^7.0.0"
   },
   "devDependencies": {
     "@types/is-url": "^1.0.0",
@@ -61,9 +61,9 @@
     "@types/parse-author": "^2.0.0",
     "c8": "^8.0.0",
     "prettier": "^3.0.0",
-    "remark": "^14.0.0",
+    "remark": "^15.0.0",
     "remark-cli": "^11.0.0",
-    "remark-gfm": "^3.0.0",
+    "remark-gfm": "^4.0.0",
     "remark-preset-wooorm": "^9.0.0",
     "type-coverage": "^2.0.0",
     "typescript": "^5.0.0",
