@@ -31,10 +31,12 @@
   ],
   "sideEffects": false,
   "type": "module",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "browser": {
-    "./lib/get-contributors-from-package.js": "./lib/get-contributors-from-package.browser.js"
+  "exports": "./index.js",
+  "imports": {
+    "#get-contributors-from-package": {
+      "node": "./lib/get-contributors-from-package.node.js",
+      "default": "./lib/get-contributors-from-package.default.js"
+    }
   },
   "files": [
     "lib/",

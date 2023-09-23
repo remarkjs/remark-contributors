@@ -2,10 +2,10 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs/promises'
 import test from 'node:test'
 import {remark} from 'remark'
+import remarkContributors from 'remark-contributors'
 import remarkGfm from 'remark-gfm'
 import {read} from 'to-vfile'
 import {VFile} from 'vfile'
-import remarkContributors from '../index.js'
 
 test('remarkContributors', async function (t) {
   // Prepare.
@@ -14,7 +14,7 @@ test('remarkContributors', async function (t) {
 
   // Tests.
   await t.test('should expose the public api', async function () {
-    assert.deepEqual(Object.keys(await import('../index.js')).sort(), [
+    assert.deepEqual(Object.keys(await import('remark-contributors')).sort(), [
       'default'
     ])
   })
