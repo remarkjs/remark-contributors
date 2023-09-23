@@ -13,6 +13,12 @@ test('remarkContributors', async function (t) {
   await fs.rename('package.json', 'package.json.bak')
 
   // Tests.
+  await t.test('should expose the public api', async function () {
+    assert.deepEqual(Object.keys(await import('../index.js')).sort(), [
+      'default'
+    ])
+  })
+
   await t.test('should not add a section by default', async function () {
     const file = await read(
       new URL('fixtures/no-heading/index.md', import.meta.url)
