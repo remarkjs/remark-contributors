@@ -18,6 +18,13 @@
 *   [Use](#use)
 *   [API](#api)
     *   [`unified().use(remarkContributors[, options])`](#unifieduseremarkcontributors-options)
+    *   [`Contributor`](#contributor)
+    *   [`ContributorObject`](#contributorobject)
+    *   [`Format`](#format)
+    *   [`Formatter`](#formatter)
+    *   [`FormatterObject`](#formatterobject)
+    *   [`Formatters`](#formatters)
+    *   [`Options`](#options)
 *   [Examples](#examples)
     *   [Example: passing contributors](#example-passing-contributors)
     *   [Example: formatters](#example-formatters)
@@ -33,12 +40,6 @@
 
 This package is a [unified][] ([remark][]) plugin that takes a list of
 contributors and adds them in a table to a `## Contributors` heading.
-
-**unified** is a project that transforms content with abstract syntax trees
-(ASTs).
-**remark** adds support for markdown to unified.
-**mdast** is the markdown AST that remark uses.
-This is a remark plugin that transforms mdast.
 
 ## When should I use this?
 
@@ -57,8 +58,8 @@ isn’t always needed or correct.
 
 ## Install
 
-This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
-In Node.js (version 12.20+, 14.14+, or 16.0+), install with [npm][]:
+This package is [ESM only][esm].
+In Node.js (version 16+), install with [npm][]:
 
 ```sh
 npm install remark-contributors
@@ -94,27 +95,23 @@ Some text.
 MIT
 ```
 
-And our module `example.js` looks as follows:
+…and a module `example.js`:
 
 ```js
-import {read} from 'to-vfile'
 import {remark} from 'remark'
-import remarkGfm from 'remark-gfm'
 import remarkContributors from 'remark-contributors'
+import remarkGfm from 'remark-gfm'
+import {read} from 'to-vfile'
 
-main()
+const file = await remark()
+  .use(remarkGfm) // This is needed to add support for tables (a GFM feature).
+  .use(remarkContributors)
+  .process(await read('example.md'))
 
-async function main() {
-  const file = await remark()
-    .use(remarkGfm) // Required: add support for tables (a GFM feature).
-    .use(remarkContributors)
-    .process(await read('example.md'))
-
-  console.log(String(file))
-}
+console.log(String(file))
 ```
 
-Now running `node example.js` yields:
+…then running `node example.js` yields:
 
 ```markdown
 # Example
@@ -135,82 +132,33 @@ Some text.
 MIT
 ```
 
-> 👉 **Note**: These contributors are inferred from this project’s
-> [`package.json`][package-json].
+> 👉 **Note**: These contributors are inferred from the
+> [`package.json`][file-package-json] in this project.
 > Running this example in a different package will yield different results.
 
 ## API
 
 This package exports no identifiers.
-The default export is `remarkContributors`.
+The default export is [`remarkContributors`][api-remark-contributors].
 
 ### `unified().use(remarkContributors[, options])`
 
 Generate a list of contributors.
+
 In short, this plugin:
 
 *   looks for the first heading matching `/^contributors$/i` or `options.heading`
 *   if no heading is found and `appendIfMissing` is set, injects such a heading
 *   if there is a heading, replaces everything in that section with a new table
 
-##### `options`
+###### Parameters
 
-Configuration (optional in Node.js, required in browsers).
+*   `options` ([`Options`][api-options], optional)
+    — configuration
 
-###### `options.contributors`
+###### Returns
 
-List of contributors to inject (`Array<Object>`).
-In Node.js, defaults to the `contributors` field in the closest `package.json`
-upwards from the processed [file][vfile], if there is one.
-Supports the string form (`name <email> (url)`) as well.
-Fails if no contributors are found or given.
-
-###### `options.align`
-
-Alignment to use for all cells in the table (`'left' | 'right' | 'center' |
-null`, default: `null`).
-
-###### `options.appendIfMissing`
-
-Whether to add a `## Contributors` section if none exists (`boolean`, default:
-`false`).
-The default does nothing when the section doesn’t exist so that you have to
-choose where and if the section is added.
-
-###### `options.heading`
-
-Heading to look for (`string` (case-insensitive) or `RegExp`, default:
-`'contributors'`).
-
-###### `options.formatters`
-
-Map of fields found in `contributors` to formatters (`Record<string,
-Formatter>`).
-These given formatters extend the [default formatters][formatters].
-
-The keys in `formatters` should correspond directly (case-sensitive) to keys in
-`contributors`.
-
-The values can be:
-
-*   `null` or `undefined` — does nothing
-*   `false` — shortcut for `{label: key, exclude: true}`, can be used to exclude
-    default formatters
-*   `true` — shortcut for `{label: key}`, can be used to include default
-    formatters (like `email`)
-*   `string` — shortcut for `{label: value}`
-*   `Formatter` — …or a proper formatter object
-
-Formatters have the following properties:
-
-*   `label` — text in the header row that labels the column for this field
-*   `exclude` — whether to ignore these fields (default: `false`)
-*   `format` — function called with `value, key, contributor` to format
-    the value.
-    Expected to return [PhrasingContent][].
-    Can return `null` or `undefined` (ignored), `string` (wrapped in a [text][]
-    node), `string` that looks like a URL (wrapped in a [link][]), one `Node`,
-    or `Array<Node>`
+Transform ([`Transformer`][unified-transformer]).
 
 ##### Notes
 
@@ -219,13 +167,119 @@ Formatters have the following properties:
 *   by default, fields named `url` will be labelled `Website` (so that
     `package.json` contributors field is displayed nicely)
 *   by default, fields named `email` are ignored
-*   Name fields are displayed as strong
+*   name fields are displayed as strong
 *   GitHub and Twitter URLs are automatically stripped and displayed with
     `@mention`s wrapped in an `https://` link
 *   if a field is undefined for a given contributor, then the value will be an
     empty table cell
-*   columns are sorted in the order they are defined (first defined => first
+*   columns are sorted in the order they are defined (first defined means first
     displayed)
+
+### `Contributor`
+
+Contributor in string form (`name <email> (url)`) or as object (TypeScript
+type).
+
+###### Type
+
+```ts
+type Contributor = ContributorObject | string
+```
+
+### `ContributorObject`
+
+Contributor with fields (TypeScript type).
+
+###### Type
+
+```ts
+type ContributorObject = Record<string, unknown>
+```
+
+### `Format`
+
+Format a field (TypeScript type).
+
+###### Parameters
+
+*   `value` (`unknown`)
+    — value to format
+*   `key` (`string`)
+    — name of a field in a contributor
+*   `contributor` ([`Contributor`][api-contributor])
+    — whole contributor
+
+###### Returns
+
+Content (`Array<PhrasingContent> | PhrasingContent | string`, optional)
+
+### `Formatter`
+
+How to format a field, in short (TypeScript type).
+
+The values can be:
+
+*   `null` or `undefined` — does nothing;
+*   `false` — shortcut for `{exclude: true, label: key}`, can be used to
+    exclude default formatters;
+*   `true` — shortcut for `{label: key}`, can be used to include default
+    formatters (like `email`)
+*   `string` — shortcut for `{label: value}`
+*   `Formatter` — …or a proper formatter object
+
+###### Type
+
+```ts
+type Formatter = FormatterObject | boolean | string | null | undefined
+```
+
+### `FormatterObject`
+
+How to format a field (TypeScript type).
+
+###### Fields
+
+*   `exclude` (`boolean`, default: `false`)
+    — whether to ignore these fields
+*   `format` ([`Format`][api-format], optional)
+    — How to format the cell
+*   `label` (`string`, optional)
+    — text in the header row that labels the column for this field
+
+### `Formatters`
+
+Formatters for fields (TypeScript type).
+
+###### Type
+
+```ts
+type Formatters = Record<string, Formatter>
+```
+
+### `Options`
+
+Configuration (TypeScript type).
+
+###### Fields
+
+*   `align` ([`AlignType` from `mdast`][mdast-align-type], optional)
+    — alignment to use for all cells in the table
+*   `appendIfMissing` (`boolean`, default: `false`)
+    — inject the section if there is none;
+    the default does nothing when the section doesn’t exist so that you have to
+    choose where and if the section is added
+*   `contributors` ([`Array<Contributor>`][api-contributor], default:
+    contributors in `package.json` in Node)
+    — list of contributors to inject;
+    supports string form (`name <email> (url)`);
+    throws if no contributors are found or given
+*   `formatters` (`string`, optional)
+    — map of fields found in `contributors` to formatters;
+    these given formatters extend the [default formatters][file-formatters];
+    the keys in `formatters` should correspond directly (case-sensitive) to
+    keys in `contributors`
+*   `heading` (`RegExp | string`, default: `'contributors'`)
+    — heading to look for
 
 ## Examples
 
@@ -235,28 +289,24 @@ The following example shows how contributors can be passed:
 
 ```js
 import {remark} from 'remark'
+import remarkContributors from 'remark-contributors'
 import remarkGfm from 'remark-gfm'
-import remarkContributors from './index.js'
 
-main()
+const file = await remark()
+  .use(remarkGfm)
+  .use(remarkContributors, {
+    contributors: [
+      // String form:
+      'Jane Doe <jane@doe.com> (https://example.com/jane)',
+      // Object form, with just a name:
+      {name: 'John Doe'},
+      // Some more info:
+      {name: 'Mona Lisa', url: 'https://github.com/monatheoctocat'}
+    ]
+  })
+  .process('## Contributors')
 
-async function main() {
-  const file = await remark()
-    .use(remarkGfm)
-    .use(remarkContributors, {
-      contributors: [
-        // String form:
-        'Jane Doe <jane@doe.com> (https://example.com/jane)',
-        // Object form, with just a name:
-        {name: 'John Doe'},
-        // Some more info:
-        {name: 'Mona Lisa', url: 'https://github.com/monatheoctocat'}
-      ]
-    })
-    .process('## Contributors')
-
-  console.log(String(file))
-}
+console.log(String(file))
 ```
 
 Yields:
@@ -277,25 +327,21 @@ By default, unknown fields in contributors will be added to the table:
 
 ```js
 import {remark} from 'remark'
-import remarkGfm from 'remark-gfm'
 import remarkContributors from 'remark-contributors'
+import remarkGfm from 'remark-gfm'
 
-main()
+const file = await remark()
+  .use(remarkGfm)
+  .use(remarkContributors, {
+    contributors: [
+      {name: 'Jane Doe', age: 31, topping: 'Mozzarella'},
+      {name: 'John Doe', age: 29, topping: 'Olive'},
+      {name: 'Mona Lisa', age: 3, topping: 'Pineapple'}
+    ]
+  })
+  .process('## Contributors')
 
-async function main() {
-  const file = await remark()
-    .use(remarkGfm)
-    .use(remarkContributors, {
-      contributors: [
-        {name: 'Jane Doe', age: 31, topping: 'Mozzarella'},
-        {name: 'John Doe', age: 29, topping: 'Olive'},
-        {name: 'Mona Lisa', age: 3, topping: 'Pineapple'}
-      ]
-    })
-    .process('## Contributors')
-
-  console.log(String(file))
-}
+console.log(String(file))
 ```
 
 Yields:
@@ -313,23 +359,23 @@ Yields:
 It’s possible to customize how these new fields are formatted:
 
 ```diff
-@@ -12,7 +12,16 @@ async function main() {
-         {name: 'Jane Doe', age: 31, topping: 'Mozzarella'},
-         {name: 'John Doe', age: 29, topping: 'Olive'},
-         {name: 'Mona Lisa', age: 3, topping: 'Pineapple'}
--      ]
-+      ],
-+      formatters: {
-+        age: {
-+          label: 'Age',
-+          format(d) {
-+            return {type: 'emphasis', children: [{type: 'text', value: String(d)}]}
-+          }
-+        },
-+        topping: 'Topping'
-+      }
-     })
-     .process('## Contributors')
+@@ -12,7 +12,16 @@ const file = await remark()
+       {name: 'Jane Doe', age: 31, topping: 'Mozzarella'},
+       {name: 'John Doe', age: 29, topping: 'Olive'},
+       {name: 'Mona Lisa', age: 3, topping: 'Pineapple'}
+-    ]
++    ],
++    formatters: {
++      age: {
++        label: 'Age',
++        format(d) {
++          return {type: 'emphasis', children: [{type: 'text', value: String(d)}]}
++        }
++      },
++      topping: 'Topping'
++    }
+   })
+   .process('## Contributors')
 ```
 
 Yields:
@@ -342,22 +388,30 @@ Yields:
 | **Mona Lisa** | *3*  | Pineapple  |
 ```
 
-> 👉 **Note**: Observe that the labels of `Age` and `Topping` are now cased,
+> 👉 **Note**: observe that the labels of `Age` and `Topping` are now cased,
 > and that the age values are now wrapped in emphasis.
 
 ## Types
 
 This package is fully typed with [TypeScript][].
-It exports additional `Format`, `FormatterObject`, `Formatter`, `Formatters`,
-`ContributorObject`, `Contributor`, and `Options` types, which model these
-respective interfaces.
+It exports the additional types
+[`Contributor`][api-contributor],
+[`ContributorObject`][api-contributor-object],
+[`Format`][api-format],
+[`Formatter`][api-formatter],
+[`FormatterObject`][api-formatter-object],
+[`Formatters`][api-formatters], and
+[`Options`][api-options].
 
 ## Compatibility
 
-Projects maintained by the unified collective are compatible with all maintained
+Projects maintained by the unified collective are compatible with maintained
 versions of Node.js.
-As of now, that is Node.js 12.20+, 14.14+, and 16.0+.
-Our projects sometimes work with older versions, but this is not guaranteed.
+
+When we cut a new major release, we drop support for unmaintained versions of
+Node.
+This means we try to keep the current release line, `remark-contributors@^6`,
+compatible with Node.js 12.
 
 This plugin works with `unified` version 6+ and `remark` version 7+.
 
@@ -367,7 +421,7 @@ This plugin works with `unified` version 6+ and `remark` version 7+.
 injected into the tree when given or found.
 Data in those lists is formatted by `options.formatters`.
 If a user has access to either, this could open you up to a
-[cross-site scripting (XSS)][xss] attack.
+[cross-site scripting (XSS)][wiki-xss] attack.
 
 This may become a problem if the markdown is later transformed to
 **[rehype][]** (**[hast][]**) or opened in an unsafe markdown viewer.
@@ -425,9 +479,9 @@ abide by its terms.
 
 [downloads]: https://www.npmjs.com/package/remark-contributors
 
-[size-badge]: https://img.shields.io/bundlephobia/minzip/remark-contributors.svg
+[size-badge]: https://img.shields.io/bundlejs/size/remark-contributors
 
-[size]: https://bundlephobia.com/result?p=remark-contributors
+[size]: https://bundlejs.com/?q=remark-contributors
 
 [sponsors-badge]: https://opencollective.com/unified/sponsors/badge.svg
 
@@ -441,42 +495,56 @@ abide by its terms.
 
 [npm]: https://docs.npmjs.com/cli/install
 
+[esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+
 [esmsh]: https://esm.sh
 
 [health]: https://github.com/remarkjs/.github
 
-[contributing]: https://github.com/remarkjs/.github/blob/HEAD/contributing.md
+[contributing]: https://github.com/remarkjs/.github/blob/main/contributing.md
 
-[support]: https://github.com/remarkjs/.github/blob/HEAD/support.md
+[support]: https://github.com/remarkjs/.github/blob/main/support.md
 
-[coc]: https://github.com/remarkjs/.github/blob/HEAD/code-of-conduct.md
+[coc]: https://github.com/remarkjs/.github/blob/main/code-of-conduct.md
 
 [license]: license
 
 [author]: https://hughsk.io
 
-[remark]: https://github.com/remarkjs/remark
+[hast]: https://github.com/syntax-tree/hast
 
-[unified]: https://github.com/unifiedjs/unified
-
-[text]: https://github.com/syntax-tree/mdast#text
-
-[link]: https://github.com/syntax-tree/mdast#link
-
-[phrasingcontent]: https://github.com/syntax-tree/mdast/blob/HEAD/readme.md#phrasingcontent
-
-[formatters]: lib/formatters.js
-
-[package-json]: package.json
-
-[xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
-
-[typescript]: https://www.typescriptlang.org
+[mdast-align-type]: https://github.com/syntax-tree#aligntype
 
 [rehype]: https://github.com/rehypejs/rehype
 
-[hast]: https://github.com/syntax-tree/hast
-
-[vfile]: https://github.com/vfile/vfile
+[remark]: https://github.com/remarkjs/remark
 
 [remark-git-contributors]: https://github.com/remarkjs/remark-git-contributors
+
+[typescript]: https://www.typescriptlang.org
+
+[unified]: https://github.com/unifiedjs/unified
+
+[unified-transformer]: https://github.com/unifiedjs/unified#transformer
+
+[wiki-xss]: https://en.wikipedia.org/wiki/Cross-site_scripting
+
+[file-formatters]: lib/formatters.js
+
+[file-package-json]: package.json
+
+[api-contributor]: #contributor
+
+[api-contributor-object]: #contributorobject
+
+[api-format]: #format
+
+[api-formatter]: #formatter
+
+[api-formatter-object]: #formatterobject
+
+[api-formatters]: #formatters
+
+[api-options]: #options
+
+[api-remark-contributors]: #unifieduseremarkcontributors-options
