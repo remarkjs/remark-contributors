@@ -8,6 +8,4 @@
  * @typedef {import('./lib/index.js').Options} Options
  */
 
-import remarkContributors from './lib/index.js'
-
-export default remarkContributors
+export {default} from './lib/index.js'
