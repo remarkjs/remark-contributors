@@ -68,14 +68,14 @@ npm install remark-contributors
 In Deno with [`esm.sh`][esmsh]:
 
 ```js
-import remarkContributors from 'https://esm.sh/remark-contributors@6'
+import remarkContributors from 'https://esm.sh/remark-contributors@7'
 ```
 
 In browsers with [`esm.sh`][esmsh]:
 
 ```html
 <script type="module">
-  import remarkContributors from 'https://esm.sh/remark-contributors@6?bundle'
+  import remarkContributors from 'https://esm.sh/remark-contributors@7?bundle'
 </script>
 ```
 
